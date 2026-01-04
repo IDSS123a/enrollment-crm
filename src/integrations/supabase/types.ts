@@ -14,16 +14,200 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activities: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          related_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          related_id?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          related_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      campaigns: {
+        Row: {
+          budget: number | null
+          channels: string[] | null
+          conversions: number | null
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          leads_count: number | null
+          name: string
+          revenue: number | null
+          spent: number | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["campaign_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget?: number | null
+          channels?: string[] | null
+          conversions?: number | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          leads_count?: number | null
+          name: string
+          revenue?: number | null
+          spent?: number | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["campaign_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          budget?: number | null
+          channels?: string[] | null
+          conversions?: number | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          leads_count?: number | null
+          name?: string
+          revenue?: number | null
+          spent?: number | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["campaign_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          source: string | null
+          status: Database["public"]["Enums"]["lead_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          source?: string | null
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          language: string | null
+          theme: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          language?: string | null
+          theme?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          language?: string | null
+          theme?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "manager" | "user"
+      campaign_status: "active" | "paused" | "completed" | "draft"
+      lead_status: "new" | "contacted" | "qualified" | "converted" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +334,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "manager", "user"],
+      campaign_status: ["active", "paused", "completed", "draft"],
+      lead_status: ["new", "contacted", "qualified", "converted", "rejected"],
+    },
   },
 } as const
