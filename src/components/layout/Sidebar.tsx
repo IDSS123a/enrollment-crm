@@ -5,6 +5,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import {
   LayoutDashboard,
   Users,
+  UserCheck,
   BarChart3,
   Megaphone,
   Settings,
@@ -14,6 +15,7 @@ import {
 
 const navigation = [
   { name: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'visitors', href: '/visitors', icon: UserCheck },
   { name: 'leads', href: '/leads', icon: Users },
   { name: 'analytics', href: '/analytics', icon: BarChart3 },
   { name: 'campaigns', href: '/campaigns', icon: Megaphone },
