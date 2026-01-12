@@ -12,6 +12,9 @@ interface TranslationStrings {
   filter: string;
   export: string;
   noData: string;
+  actions: string;
+  confirmDelete: string;
+  allStatuses: string;
   
   // Auth
   login: string;
@@ -32,6 +35,7 @@ interface TranslationStrings {
   analytics: string;
   campaigns: string;
   settings: string;
+  visitors: string;
   
   // Dashboard
   totalLeads: string;
@@ -85,6 +89,107 @@ interface TranslationStrings {
   deleteError: string;
   loginError: string;
   signupSuccess: string;
+
+  // Visitors
+  visitorsDescription: string;
+  addVisitor: string;
+  editVisitor: string;
+  totalVisitors: string;
+  visitedCount: string;
+  enrolledCount: string;
+  conversionRateVisit: string;
+  visitToEnrollment: string;
+  
+  // Visitor form tabs
+  child: string;
+  parents: string;
+  visit: string;
+  financial: string;
+  
+  // Child info
+  childInfo: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  citizenship: string;
+  address: string;
+  addressPlaceholder: string;
+  childName: string;
+  
+  // Parent info
+  parentInfo: string;
+  mother: string;
+  father: string;
+  guardian: string;
+  phone: string;
+  profession: string;
+  
+  // Visit details
+  visitDetails: string;
+  visitType: string;
+  inPerson: string;
+  online: string;
+  visitDate: string;
+  visitorStatus: string;
+  scheduled: string;
+  visited: string;
+  enrolledStatus: string;
+  pending: string;
+  referralSource: string;
+  referralSourcePlaceholder: string;
+  visitNotes: string;
+  
+  // Enrollment assessment
+  enrollmentAssessment: string;
+  enrollmentDecision: string;
+  selectDecision: string;
+  approved: string;
+  conditional: string;
+  decisionRejected: string;
+  pendingReview: string;
+  decisionNotes: string;
+  decisionNotesPlaceholder: string;
+  
+  // Financial
+  financialDetails: string;
+  targetGrade: string;
+  selectGrade: string;
+  grade: string;
+  schoolYear: string;
+  enrollmentSemester: string;
+  semester1Full: string;
+  semester2Only: string;
+  residentType: string;
+  domestic: string;
+  foreign: string;
+  paymentType: string;
+  fullPayment: string;
+  installments: string;
+  monthsToPay: string;
+  
+  // Discounts
+  discountsWaivers: string;
+  siblingDiscount: string;
+  noDiscount: string;
+  secondChild: string;
+  thirdChild: string;
+  scholarshipPercent: string;
+  scholarshipType: string;
+  scholarshipTypePlaceholder: string;
+  registrationFeeWaived: string;
+  usesExtendedStay: string;
+  
+  // Fee summary
+  feeSummary: string;
+  registrationFee: string;
+  deposit: string;
+  baseTuition: string;
+  siblingDiscountAmount: string;
+  scholarshipDiscountAmount: string;
+  extendedStay: string;
+  proRated: string;
+  months: string;
+  totalAmountDue: string;
 }
 
 const translations: Record<Language, TranslationStrings> = {
@@ -99,6 +204,9 @@ const translations: Record<Language, TranslationStrings> = {
     filter: 'Filter',
     export: 'Export',
     noData: 'No data available',
+    actions: 'Actions',
+    confirmDelete: 'Are you sure you want to delete this?',
+    allStatuses: 'All Statuses',
     
     login: 'Login',
     signup: 'Sign Up',
@@ -117,6 +225,7 @@ const translations: Record<Language, TranslationStrings> = {
     analytics: 'Analytics',
     campaigns: 'Campaigns',
     settings: 'Settings',
+    visitors: 'Visitors',
     
     totalLeads: 'Total Leads',
     conversionRate: 'Conversion Rate',
@@ -165,6 +274,107 @@ const translations: Record<Language, TranslationStrings> = {
     deleteError: 'Failed to delete',
     loginError: 'Login failed. Please check your credentials.',
     signupSuccess: 'Account created successfully!',
+
+    // Visitors
+    visitorsDescription: 'Manage school visitors and enrollment applications',
+    addVisitor: 'Add Visitor',
+    editVisitor: 'Edit Visitor',
+    totalVisitors: 'Total Visitors',
+    visitedCount: 'Visits Completed',
+    enrolledCount: 'Enrolled',
+    conversionRateVisit: 'Conversion Rate',
+    visitToEnrollment: 'Visit to enrollment',
+    
+    // Visitor form tabs
+    child: 'Child',
+    parents: 'Parents',
+    visit: 'Visit',
+    financial: 'Financial',
+    
+    // Child info
+    childInfo: 'Child Information',
+    firstName: 'First Name',
+    lastName: 'Last Name',
+    dateOfBirth: 'Date of Birth',
+    citizenship: 'Citizenship',
+    address: 'Address',
+    addressPlaceholder: 'City, Street and Number, ZIP',
+    childName: 'Child Name',
+    
+    // Parent info
+    parentInfo: 'Parent/Guardian Information',
+    mother: 'Mother',
+    father: 'Father',
+    guardian: 'Guardian (if applicable)',
+    phone: 'Phone',
+    profession: 'Profession',
+    
+    // Visit details
+    visitDetails: 'Visit Details',
+    visitType: 'Visit Type',
+    inPerson: 'In Person',
+    online: 'Online',
+    visitDate: 'Visit Date',
+    visitorStatus: 'Status',
+    scheduled: 'Scheduled',
+    visited: 'Visited',
+    enrolledStatus: 'Enrolled',
+    pending: 'Pending',
+    referralSource: 'How did you find us?',
+    referralSourcePlaceholder: 'Website, Friend, Social Media...',
+    visitNotes: 'Visit Notes',
+    
+    // Enrollment assessment
+    enrollmentAssessment: 'Enrollment Assessment',
+    enrollmentDecision: 'Decision',
+    selectDecision: 'Select decision',
+    approved: 'Approved',
+    conditional: 'Conditional',
+    decisionRejected: 'Rejected',
+    pendingReview: 'Pending Review',
+    decisionNotes: 'Decision Notes',
+    decisionNotesPlaceholder: 'Notes about the enrollment decision...',
+    
+    // Financial
+    financialDetails: 'Financial Details',
+    targetGrade: 'Target Grade',
+    selectGrade: 'Select grade',
+    grade: 'Grade',
+    schoolYear: 'School Year',
+    enrollmentSemester: 'Enrollment Period',
+    semester1Full: 'Full Year (Semester 1)',
+    semester2Only: 'Second Semester Only',
+    residentType: 'Resident Type',
+    domestic: 'Domestic',
+    foreign: 'Foreign',
+    paymentType: 'Payment Type',
+    fullPayment: 'Full Payment',
+    installments: 'Installments',
+    monthsToPay: 'Months to Pay',
+    
+    // Discounts
+    discountsWaivers: 'Discounts & Waivers',
+    siblingDiscount: 'Sibling Discount',
+    noDiscount: 'No Discount',
+    secondChild: '2nd child',
+    thirdChild: '3rd child',
+    scholarshipPercent: 'Scholarship %',
+    scholarshipType: 'Scholarship Type',
+    scholarshipTypePlaceholder: 'e.g., School Board Decision, Merit...',
+    registrationFeeWaived: 'Registration Fee Waived',
+    usesExtendedStay: 'Uses Extended Stay Program',
+    
+    // Fee summary
+    feeSummary: 'Fee Summary',
+    registrationFee: 'Registration Fee',
+    deposit: 'Deposit',
+    baseTuition: 'Base Tuition',
+    siblingDiscountAmount: 'Sibling Discount',
+    scholarshipDiscountAmount: 'Scholarship Discount',
+    extendedStay: 'Extended Stay',
+    proRated: 'Pro-rated',
+    months: 'months',
+    totalAmountDue: 'Total Amount Due',
   },
   BS: {
     loading: 'Učitavanje...',
@@ -177,6 +387,9 @@ const translations: Record<Language, TranslationStrings> = {
     filter: 'Filter',
     export: 'Izvezi',
     noData: 'Nema dostupnih podataka',
+    actions: 'Akcije',
+    confirmDelete: 'Jeste li sigurni da želite obrisati?',
+    allStatuses: 'Svi statusi',
     
     login: 'Prijava',
     signup: 'Registracija',
@@ -195,6 +408,7 @@ const translations: Record<Language, TranslationStrings> = {
     analytics: 'Analitika',
     campaigns: 'Kampanje',
     settings: 'Postavke',
+    visitors: 'Posjetioci',
     
     totalLeads: 'Ukupno kandidata',
     conversionRate: 'Stopa konverzije',
@@ -243,6 +457,107 @@ const translations: Record<Language, TranslationStrings> = {
     deleteError: 'Greška pri brisanju',
     loginError: 'Prijava nije uspjela. Provjerite podatke.',
     signupSuccess: 'Račun je uspješno kreiran!',
+
+    // Visitors
+    visitorsDescription: 'Upravljanje posjetiocima škole i prijavama za upis',
+    addVisitor: 'Dodaj posjetioca',
+    editVisitor: 'Uredi posjetioca',
+    totalVisitors: 'Ukupno posjetilaca',
+    visitedCount: 'Završene posjete',
+    enrolledCount: 'Upisani',
+    conversionRateVisit: 'Stopa konverzije',
+    visitToEnrollment: 'Posjeta do upisa',
+    
+    // Visitor form tabs
+    child: 'Dijete',
+    parents: 'Roditelji',
+    visit: 'Posjeta',
+    financial: 'Financije',
+    
+    // Child info
+    childInfo: 'Informacije o djetetu',
+    firstName: 'Ime',
+    lastName: 'Prezime',
+    dateOfBirth: 'Datum rođenja',
+    citizenship: 'Državljanstvo',
+    address: 'Adresa',
+    addressPlaceholder: 'Mjesto, ulica i broj, poštanski broj',
+    childName: 'Ime djeteta',
+    
+    // Parent info
+    parentInfo: 'Informacije o roditeljima/starateljima',
+    mother: 'Majka',
+    father: 'Otac',
+    guardian: 'Staratelj (ako je primjenjivo)',
+    phone: 'Telefon',
+    profession: 'Zanimanje',
+    
+    // Visit details
+    visitDetails: 'Detalji posjete',
+    visitType: 'Tip posjete',
+    inPerson: 'Uživo',
+    online: 'Online',
+    visitDate: 'Datum posjete',
+    visitorStatus: 'Status',
+    scheduled: 'Zakazano',
+    visited: 'Posjetio',
+    enrolledStatus: 'Upisan',
+    pending: 'Na čekanju',
+    referralSource: 'Kako ste saznali za nas?',
+    referralSourcePlaceholder: 'Web stranica, prijatelj, društvene mreže...',
+    visitNotes: 'Bilješke o posjeti',
+    
+    // Enrollment assessment
+    enrollmentAssessment: 'Procjena upisa',
+    enrollmentDecision: 'Odluka',
+    selectDecision: 'Odaberite odluku',
+    approved: 'Odobreno',
+    conditional: 'Uslovno',
+    decisionRejected: 'Odbijeno',
+    pendingReview: 'U razmatranju',
+    decisionNotes: 'Bilješke o odluci',
+    decisionNotesPlaceholder: 'Bilješke o odluci o upisu...',
+    
+    // Financial
+    financialDetails: 'Financijski detalji',
+    targetGrade: 'Ciljni razred',
+    selectGrade: 'Odaberite razred',
+    grade: 'Razred',
+    schoolYear: 'Školska godina',
+    enrollmentSemester: 'Period upisa',
+    semester1Full: 'Cijela godina (1. polugodište)',
+    semester2Only: 'Samo drugo polugodište',
+    residentType: 'Tip rezidenta',
+    domestic: 'Domaće lice',
+    foreign: 'Strano lice',
+    paymentType: 'Tip plaćanja',
+    fullPayment: 'Jednokratno',
+    installments: 'Na rate',
+    monthsToPay: 'Broj mjeseci',
+    
+    // Discounts
+    discountsWaivers: 'Popusti i oslobođenja',
+    siblingDiscount: 'Popust za brata/sestru',
+    noDiscount: 'Bez popusta',
+    secondChild: '2. dijete',
+    thirdChild: '3. dijete',
+    scholarshipPercent: 'Stipendija %',
+    scholarshipType: 'Tip stipendije',
+    scholarshipTypePlaceholder: 'npr. Odluka Školskog odbora, Zasluge...',
+    registrationFeeWaived: 'Oslobođenje od upisnine',
+    usesExtendedStay: 'Koristi produženi boravak',
+    
+    // Fee summary
+    feeSummary: 'Pregled troškova',
+    registrationFee: 'Upisnina',
+    deposit: 'Depozit',
+    baseTuition: 'Osnovna školarina',
+    siblingDiscountAmount: 'Popust za brata/sestru',
+    scholarshipDiscountAmount: 'Popust stipendije',
+    extendedStay: 'Produženi boravak',
+    proRated: 'Pro-rata',
+    months: 'mjeseci',
+    totalAmountDue: 'Ukupno za plaćanje',
   },
 };
 

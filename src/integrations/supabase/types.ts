@@ -137,6 +137,60 @@ export type Database = {
         }
         Relationships: []
       }
+      pricing: {
+        Row: {
+          created_at: string
+          deposit_amount: number
+          extended_stay_fee: number
+          id: string
+          is_active: boolean
+          registration_fee_domestic: number
+          registration_fee_foreign: number
+          school_year: string
+          sibling_discount_2nd: number
+          sibling_discount_3rd: number
+          tuition_1_4_domestic: number
+          tuition_1_4_foreign: number
+          tuition_5_9_domestic: number
+          tuition_5_9_foreign: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deposit_amount?: number
+          extended_stay_fee?: number
+          id?: string
+          is_active?: boolean
+          registration_fee_domestic?: number
+          registration_fee_foreign?: number
+          school_year: string
+          sibling_discount_2nd?: number
+          sibling_discount_3rd?: number
+          tuition_1_4_domestic?: number
+          tuition_1_4_foreign?: number
+          tuition_5_9_domestic?: number
+          tuition_5_9_foreign?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deposit_amount?: number
+          extended_stay_fee?: number
+          id?: string
+          is_active?: boolean
+          registration_fee_domestic?: number
+          registration_fee_foreign?: number
+          school_year?: string
+          sibling_discount_2nd?: number
+          sibling_discount_3rd?: number
+          tuition_1_4_domestic?: number
+          tuition_1_4_foreign?: number
+          tuition_5_9_domestic?: number
+          tuition_5_9_foreign?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -191,6 +245,159 @@ export type Database = {
         }
         Relationships: []
       }
+      visitors: {
+        Row: {
+          child_address: string
+          child_citizenship: string
+          child_date_of_birth: string
+          child_first_name: string
+          child_last_name: string
+          created_at: string
+          deposit_amount: number | null
+          enrollment_decision:
+            | Database["public"]["Enums"]["enrollment_decision"]
+            | null
+          enrollment_decision_notes: string | null
+          enrollment_semester: number | null
+          extended_stay_fee: number | null
+          father_email: string | null
+          father_first_name: string | null
+          father_last_name: string | null
+          father_phone: string | null
+          father_profession: string | null
+          guardian_email: string | null
+          guardian_phone: string | null
+          id: string
+          months_to_pay: number | null
+          mother_email: string | null
+          mother_first_name: string | null
+          mother_last_name: string | null
+          mother_phone: string | null
+          mother_profession: string | null
+          payment_type: Database["public"]["Enums"]["payment_type"]
+          referral_source: string | null
+          registration_fee: number | null
+          registration_fee_waived: boolean | null
+          resident_type: Database["public"]["Enums"]["resident_type"]
+          scholarship_percent: number | null
+          scholarship_type: string | null
+          sibling_discount_percent: number | null
+          status: Database["public"]["Enums"]["visitor_status"]
+          target_grade: Database["public"]["Enums"]["grade_level"] | null
+          target_school_year: string | null
+          total_amount_due: number | null
+          total_tuition_after_discounts: number | null
+          tuition_fee: number | null
+          updated_at: string
+          user_id: string
+          uses_extended_stay: boolean | null
+          visit_date: string | null
+          visit_notes: string | null
+          visit_scheduled_at: string | null
+          visit_type: Database["public"]["Enums"]["visit_type"]
+        }
+        Insert: {
+          child_address: string
+          child_citizenship: string
+          child_date_of_birth: string
+          child_first_name: string
+          child_last_name: string
+          created_at?: string
+          deposit_amount?: number | null
+          enrollment_decision?:
+            | Database["public"]["Enums"]["enrollment_decision"]
+            | null
+          enrollment_decision_notes?: string | null
+          enrollment_semester?: number | null
+          extended_stay_fee?: number | null
+          father_email?: string | null
+          father_first_name?: string | null
+          father_last_name?: string | null
+          father_phone?: string | null
+          father_profession?: string | null
+          guardian_email?: string | null
+          guardian_phone?: string | null
+          id?: string
+          months_to_pay?: number | null
+          mother_email?: string | null
+          mother_first_name?: string | null
+          mother_last_name?: string | null
+          mother_phone?: string | null
+          mother_profession?: string | null
+          payment_type?: Database["public"]["Enums"]["payment_type"]
+          referral_source?: string | null
+          registration_fee?: number | null
+          registration_fee_waived?: boolean | null
+          resident_type?: Database["public"]["Enums"]["resident_type"]
+          scholarship_percent?: number | null
+          scholarship_type?: string | null
+          sibling_discount_percent?: number | null
+          status?: Database["public"]["Enums"]["visitor_status"]
+          target_grade?: Database["public"]["Enums"]["grade_level"] | null
+          target_school_year?: string | null
+          total_amount_due?: number | null
+          total_tuition_after_discounts?: number | null
+          tuition_fee?: number | null
+          updated_at?: string
+          user_id: string
+          uses_extended_stay?: boolean | null
+          visit_date?: string | null
+          visit_notes?: string | null
+          visit_scheduled_at?: string | null
+          visit_type?: Database["public"]["Enums"]["visit_type"]
+        }
+        Update: {
+          child_address?: string
+          child_citizenship?: string
+          child_date_of_birth?: string
+          child_first_name?: string
+          child_last_name?: string
+          created_at?: string
+          deposit_amount?: number | null
+          enrollment_decision?:
+            | Database["public"]["Enums"]["enrollment_decision"]
+            | null
+          enrollment_decision_notes?: string | null
+          enrollment_semester?: number | null
+          extended_stay_fee?: number | null
+          father_email?: string | null
+          father_first_name?: string | null
+          father_last_name?: string | null
+          father_phone?: string | null
+          father_profession?: string | null
+          guardian_email?: string | null
+          guardian_phone?: string | null
+          id?: string
+          months_to_pay?: number | null
+          mother_email?: string | null
+          mother_first_name?: string | null
+          mother_last_name?: string | null
+          mother_phone?: string | null
+          mother_profession?: string | null
+          payment_type?: Database["public"]["Enums"]["payment_type"]
+          referral_source?: string | null
+          registration_fee?: number | null
+          registration_fee_waived?: boolean | null
+          resident_type?: Database["public"]["Enums"]["resident_type"]
+          scholarship_percent?: number | null
+          scholarship_type?: string | null
+          sibling_discount_percent?: number | null
+          status?: Database["public"]["Enums"]["visitor_status"]
+          target_grade?: Database["public"]["Enums"]["grade_level"] | null
+          target_school_year?: string | null
+          total_amount_due?: number | null
+          total_tuition_after_discounts?: number | null
+          tuition_fee?: number | null
+          updated_at?: string
+          user_id?: string
+          uses_extended_stay?: boolean | null
+          visit_date?: string | null
+          visit_notes?: string | null
+          visit_scheduled_at?: string | null
+          visit_type?: Database["public"]["Enums"]["visit_type"]
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -207,7 +414,22 @@ export type Database = {
     Enums: {
       app_role: "admin" | "manager" | "user"
       campaign_status: "active" | "paused" | "completed" | "draft"
+      enrollment_decision:
+        | "approved"
+        | "conditional"
+        | "rejected"
+        | "pending_review"
+      grade_level: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
       lead_status: "new" | "contacted" | "qualified" | "converted" | "rejected"
+      payment_type: "full" | "installments"
+      resident_type: "domestic" | "foreign"
+      visit_type: "in_person" | "online"
+      visitor_status:
+        | "scheduled"
+        | "visited"
+        | "enrolled"
+        | "rejected"
+        | "pending"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -337,7 +559,24 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "manager", "user"],
       campaign_status: ["active", "paused", "completed", "draft"],
+      enrollment_decision: [
+        "approved",
+        "conditional",
+        "rejected",
+        "pending_review",
+      ],
+      grade_level: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
       lead_status: ["new", "contacted", "qualified", "converted", "rejected"],
+      payment_type: ["full", "installments"],
+      resident_type: ["domestic", "foreign"],
+      visit_type: ["in_person", "online"],
+      visitor_status: [
+        "scheduled",
+        "visited",
+        "enrolled",
+        "rejected",
+        "pending",
+      ],
     },
   },
 } as const
