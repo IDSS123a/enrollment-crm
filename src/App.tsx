@@ -15,6 +15,7 @@ import Leads from "./pages/Leads";
 import Analytics from "./pages/Analytics";
 import Campaigns from "./pages/Campaigns";
 import Settings from "./pages/Settings";
+import Visitors from "./pages/Visitors";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -112,6 +113,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Settings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/visitors"
+        element={
+          <ProtectedRoute>
+            <Visitors />
           </ProtectedRoute>
         }
       />
