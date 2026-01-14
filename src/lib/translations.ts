@@ -190,6 +190,32 @@ interface TranslationStrings {
   proRated: string;
   months: string;
   totalAmountDue: string;
+  
+  // Pricing Management
+  pricingManagement: string;
+  manageFees: string;
+  saveChanges: string;
+  generalSettings: string;
+  activePricing: string;
+  activePricingDesc: string;
+  registrationDeposit: string;
+  registrationDepositDesc: string;
+  registrationFeeDomestic: string;
+  registrationFeeForeign: string;
+  depositAmount: string;
+  tuitionFees: string;
+  tuitionFeesDesc: string;
+  grades1to4: string;
+  grades5to9: string;
+  domesticTuition: string;
+  foreignTuition: string;
+  additionalFeesDiscounts: string;
+  additionalFeesDesc: string;
+  extendedStayFee: string;
+  siblingDiscount2nd: string;
+  siblingDiscount3rd: string;
+  accessDenied: string;
+  adminOnlyAccess: string;
 }
 
 const translations: Record<Language, TranslationStrings> = {
@@ -375,6 +401,32 @@ const translations: Record<Language, TranslationStrings> = {
     proRated: 'Pro-rated',
     months: 'months',
     totalAmountDue: 'Total Amount Due',
+    
+    // Pricing Management
+    pricingManagement: 'Pricing Management',
+    manageFees: 'Manage school fees and discounts',
+    saveChanges: 'Save Changes',
+    generalSettings: 'General Settings',
+    activePricing: 'Active Pricing',
+    activePricingDesc: 'Set as the active pricing for new enrollments',
+    registrationDeposit: 'Registration & Deposit',
+    registrationDepositDesc: 'One-time fees charged at enrollment',
+    registrationFeeDomestic: 'Registration Fee (Domestic)',
+    registrationFeeForeign: 'Registration Fee (Foreign)',
+    depositAmount: 'Deposit Amount',
+    tuitionFees: 'Tuition Fees',
+    tuitionFeesDesc: 'Annual tuition by grade level and residency',
+    grades1to4: 'Grades 1-4',
+    grades5to9: 'Grades 5-9',
+    domesticTuition: 'Domestic Tuition',
+    foreignTuition: 'Foreign Tuition',
+    additionalFeesDiscounts: 'Additional Fees & Discounts',
+    additionalFeesDesc: 'Optional fees and discount percentages',
+    extendedStayFee: 'Extended Stay Fee',
+    siblingDiscount2nd: 'Sibling Discount (2nd child)',
+    siblingDiscount3rd: 'Sibling Discount (3rd child)',
+    accessDenied: 'Access Denied',
+    adminOnlyAccess: 'This page is only accessible to administrators.',
   },
   BS: {
     loading: 'Učitavanje...',
@@ -558,6 +610,32 @@ const translations: Record<Language, TranslationStrings> = {
     proRated: 'Pro-rata',
     months: 'mjeseci',
     totalAmountDue: 'Ukupno za plaćanje',
+    
+    // Pricing Management
+    pricingManagement: 'Upravljanje cijenama',
+    manageFees: 'Upravljanje školskim naknadama i popustima',
+    saveChanges: 'Sačuvaj izmjene',
+    generalSettings: 'Opće postavke',
+    activePricing: 'Aktivne cijene',
+    activePricingDesc: 'Postavi kao aktivne cijene za nove upise',
+    registrationDeposit: 'Upisnina i depozit',
+    registrationDepositDesc: 'Jednokratne naknade pri upisu',
+    registrationFeeDomestic: 'Upisnina (domaće lice)',
+    registrationFeeForeign: 'Upisnina (strano lice)',
+    depositAmount: 'Iznos depozita',
+    tuitionFees: 'Školarine',
+    tuitionFeesDesc: 'Godišnja školarina po razredu i tipu rezidenta',
+    grades1to4: 'Razredi 1-4',
+    grades5to9: 'Razredi 5-9',
+    domesticTuition: 'Školarina (domaće)',
+    foreignTuition: 'Školarina (strano)',
+    additionalFeesDiscounts: 'Dodatne naknade i popusti',
+    additionalFeesDesc: 'Opcionalne naknade i postoci popusta',
+    extendedStayFee: 'Naknada za produženi boravak',
+    siblingDiscount2nd: 'Popust za brata/sestru (2. dijete)',
+    siblingDiscount3rd: 'Popust za brata/sestru (3. dijete)',
+    accessDenied: 'Pristup odbijen',
+    adminOnlyAccess: 'Ova stranica je dostupna samo administratorima.',
   },
 };
 

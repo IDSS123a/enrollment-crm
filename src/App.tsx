@@ -16,6 +16,7 @@ import Analytics from "./pages/Analytics";
 import Campaigns from "./pages/Campaigns";
 import Settings from "./pages/Settings";
 import Visitors from "./pages/Visitors";
+import PricingManagement from "./pages/PricingManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -121,6 +122,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Visitors />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pricing"
+        element={
+          <ProtectedRoute>
+            <PricingManagement />
           </ProtectedRoute>
         }
       />

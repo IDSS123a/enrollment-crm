@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useUserRole } from '@/hooks/useUserRole';
 import {
   LayoutDashboard,
   Users,
@@ -11,6 +12,7 @@ import {
   Settings,
   LogOut,
   CheckCircle,
+  DollarSign,
 } from 'lucide-react';
 
 const navigation = [
@@ -22,10 +24,15 @@ const navigation = [
   { name: 'settings', href: '/settings', icon: Settings },
 ];
 
+const adminNavigation = [
+  { name: 'pricingManagement', href: '/pricing', icon: DollarSign },
+];
+
 export function Sidebar() {
   const location = useLocation();
   const { signOut, profile } = useAuth();
   const { t } = useLanguage();
+  const { isAdmin } = useUserRole();
 
   return (
     <aside className="hidden md:flex h-screen w-64 flex-col gradient-sidebar text-white">
@@ -62,6 +69,33 @@ export function Sidebar() {
             </Link>
           );
         })}
+        
+        {/* Admin Navigation */}
+        {isAdmin && (
+          <>
+            <div className="my-3 border-t border-white/10" />
+            {adminNavigation.map((item) => {
+              const isActive = location.pathname === item.href;
+              const translationKey = item.name as Parameters<typeof t>[0];
+              
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+                    isActive
+                      ? 'bg-white/20 text-white shadow-lg'
+                      : 'text-white/70 hover:bg-white/10 hover:text-white'
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                  {t(translationKey)}
+                </Link>
+              );
+            })}
+          </>
+        )}
       </nav>
 
       {/* Sync Status */}
