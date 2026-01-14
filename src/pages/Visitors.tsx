@@ -271,29 +271,28 @@ export default function Visitors() {
           <StatCard
             title={t('totalVisitors')}
             value={totalVisitors.toString()}
-            icon={User}
-            trend={{ value: visitors.filter(v => {
+            icon={<User />}
+            trend={{ value: `${visitors.filter(v => {
               const date = new Date(v.created_at);
               const now = new Date();
               return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-            }).length, isPositive: true }}
+            }).length} this month`, positive: true }}
           />
           <StatCard
             title={t('visitedCount')}
             value={visitedCount.toString()}
-            icon={Calendar}
+            icon={<Calendar />}
           />
           <StatCard
             title={t('enrolledCount')}
             value={enrolledCount.toString()}
-            icon={GraduationCap}
-            trend={{ value: enrolledCount, isPositive: true }}
+            icon={<GraduationCap />}
+            trend={{ value: `${enrolledCount} enrolled`, positive: true }}
           />
           <StatCard
             title={t('conversionRateVisit')}
             value={`${conversionRate}%`}
-            icon={TrendingUp}
-            description={t('visitToEnrollment')}
+            icon={<TrendingUp />}
           />
         </div>
 
