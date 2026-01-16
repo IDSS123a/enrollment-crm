@@ -3,6 +3,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { MaterialCard } from '@/components/dashboard/MaterialCard';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
+import { VisitorActivityWidget } from '@/components/dashboard/VisitorActivityWidget';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
@@ -182,8 +183,10 @@ export default function Dashboard() {
           </MaterialCard>
         </div>
 
-        {/* Lead Sources */}
+        {/* Visitor Activity & Lead Sources */}
         <div className="grid gap-6 md:grid-cols-2">
+          <VisitorActivityWidget />
+          
           <MaterialCard title={t('leadSources')}>
             <div className="space-y-4">
               {[
@@ -207,7 +210,10 @@ export default function Dashboard() {
               ))}
             </div>
           </MaterialCard>
+        </div>
 
+        {/* Quick Actions */}
+        <div className="grid gap-6 md:grid-cols-2">
           <MaterialCard title="Quick Actions">
             <div className="grid grid-cols-2 gap-3">
               <a
