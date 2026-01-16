@@ -35,8 +35,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Search, Edit, Trash2, Loader2, Calendar, User, GraduationCap, TrendingUp } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Loader2, Calendar, User, GraduationCap, TrendingUp, Mail, Bell } from 'lucide-react';
 import { format } from 'date-fns';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -64,6 +67,14 @@ export default function Visitors() {
   const [editingVisitor, setEditingVisitor] = useState<Visitor | null>(null);
   const [formData, setFormData] = useState<VisitorFormData>(initialVisitorFormData);
   const [activeTab, setActiveTab] = useState('child');
+  
+  // Bulk email state
+  const [selectedVisitors, setSelectedVisitors] = useState<Set<string>>(new Set());
+  const [isBulkEmailModalOpen, setIsBulkEmailModalOpen] = useState(false);
+  const [bulkEmailSubject, setBulkEmailSubject] = useState('');
+  const [bulkEmailMessage, setBulkEmailMessage] = useState('');
+  const [sendingBulkEmail, setSendingBulkEmail] = useState(false);
+  const [sendingReminders, setSendingReminders] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -288,6 +299,87 @@ export default function Visitors() {
     setActiveTab('child');
   };
 
+  // Bulk email handlers
+  const handleSelectVisitor = (visitorId: string, checked: boolean) => {
+    const newSelected = new Set(selectedVisitors);
+    if (checked) {
+      newSelected.add(visitorId);
+    } else {
+      newSelected.delete(visitorId);
+    }
+    setSelectedVisitors(newSelected);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedVisitors(new Set(filteredVisitors.map(v => v.id)));
+    } else {
+      setSelectedVisitors(new Set());
+    }
+  };
+
+  const handleSendBulkEmail = async () => {
+    if (selectedVisitors.size === 0) {
+      toast({ title: 'Error', description: 'Please select at least one visitor', variant: 'destructive' });
+      return;
+    }
+
+    if (!bulkEmailSubject.trim() || !bulkEmailMessage.trim()) {
+      toast({ title: 'Error', description: 'Subject and message are required', variant: 'destructive' });
+      return;
+    }
+
+    setSendingBulkEmail(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-bulk-email', {
+        body: {
+          visitorIds: Array.from(selectedVisitors),
+          subject: bulkEmailSubject.trim(),
+          message: bulkEmailMessage.trim(),
+          userId: user?.id,
+        },
+      });
+
+      if (error) throw error;
+
+      const results = data?.results;
+      toast({
+        title: 'Bulk Email Sent',
+        description: `${results?.sent || 0} sent, ${results?.failed || 0} failed, ${results?.skipped || 0} skipped (no email)`,
+      });
+
+      setIsBulkEmailModalOpen(false);
+      setBulkEmailSubject('');
+      setBulkEmailMessage('');
+      setSelectedVisitors(new Set());
+    } catch (error: any) {
+      console.error('Bulk email error:', error);
+      toast({ title: 'Error', description: error.message || 'Failed to send emails', variant: 'destructive' });
+    } finally {
+      setSendingBulkEmail(false);
+    }
+  };
+
+  const handleSendReminders = async () => {
+    setSendingReminders(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-visit-reminders');
+
+      if (error) throw error;
+
+      const results = data?.results;
+      toast({
+        title: 'Reminders Sent',
+        description: `${results?.sent || 0} reminders sent, ${results?.failed || 0} failed, ${results?.skipped || 0} skipped`,
+      });
+    } catch (error: any) {
+      console.error('Reminder error:', error);
+      toast({ title: 'Error', description: error.message || 'Failed to send reminders', variant: 'destructive' });
+    } finally {
+      setSendingReminders(false);
+    }
+  };
+
   const filteredVisitors = visitors.filter((visitor) => {
     const fullName = `${visitor.child_first_name} ${visitor.child_last_name}`.toLowerCase();
     const matchesSearch = fullName.includes(searchQuery.toLowerCase());
@@ -350,62 +442,161 @@ export default function Visitors() {
             <h1 className="text-2xl font-bold text-foreground">{t('visitors')}</h1>
             <p className="text-muted-foreground">{t('visitorsDescription')}</p>
           </div>
-          <Dialog open={isModalOpen} onOpenChange={(open) => {
-            setIsModalOpen(open);
-            if (!open) resetForm();
-          }}>
-            <DialogTrigger asChild>
-              <Button className="gradient-primary">
-                <Plus className="h-4 w-4 mr-2" />
-                {t('addVisitor')}
+          <div className="flex flex-wrap gap-2">
+            {/* Send Reminders Button */}
+            <Button
+              variant="outline"
+              onClick={handleSendReminders}
+              disabled={sendingReminders}
+            >
+              {sendingReminders ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Bell className="h-4 w-4 mr-2" />
+              )}
+              Send Reminders
+            </Button>
+
+            {/* Bulk Email Button */}
+            {selectedVisitors.size > 0 && (
+              <Button
+                variant="secondary"
+                onClick={() => setIsBulkEmailModalOpen(true)}
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Email {selectedVisitors.size} Selected
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh]">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingVisitor ? t('editVisitor') : t('addVisitor')}
-                </DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit}>
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
-                  <TabsList className="grid w-full grid-cols-4">
-                    <TabsTrigger value="child">{t('child')}</TabsTrigger>
-                    <TabsTrigger value="parents">{t('parents')}</TabsTrigger>
-                    <TabsTrigger value="visit">{t('visit')}</TabsTrigger>
-                    <TabsTrigger value="financial">{t('financial')}</TabsTrigger>
-                  </TabsList>
-                  <ScrollArea className="h-[60vh] mt-4 pr-4">
-                    <TabsContent value="child" className="mt-0">
-                      <ChildInfoSection formData={formData} onChange={handleFormChange} t={t} />
-                    </TabsContent>
-                    <TabsContent value="parents" className="mt-0">
-                      <ParentInfoSection formData={formData} onChange={handleFormChange} t={t} />
-                    </TabsContent>
-                    <TabsContent value="visit" className="mt-0">
-                      <VisitDetailsSection formData={formData} onChange={handleFormChange} t={t} />
-                    </TabsContent>
-                    <TabsContent value="financial" className="mt-0">
-                      <FinancialSection formData={formData} onChange={handleFormChange} t={t} />
-                    </TabsContent>
-                  </ScrollArea>
-                </Tabs>
-                <div className="flex gap-3 pt-4 border-t mt-4">
-                  <Button type="submit" className="flex-1 gradient-primary">
-                    {t('save')}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => setIsModalOpen(false)}
-                  >
-                    {t('cancel')}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+            )}
+
+            {/* Add Visitor Dialog */}
+            <Dialog open={isModalOpen} onOpenChange={(open) => {
+              setIsModalOpen(open);
+              if (!open) resetForm();
+            }}>
+              <DialogTrigger asChild>
+                <Button className="gradient-primary">
+                  <Plus className="h-4 w-4 mr-2" />
+                  {t('addVisitor')}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh]">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingVisitor ? t('editVisitor') : t('addVisitor')}
+                  </DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit}>
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
+                    <TabsList className="grid w-full grid-cols-4">
+                      <TabsTrigger value="child">{t('child')}</TabsTrigger>
+                      <TabsTrigger value="parents">{t('parents')}</TabsTrigger>
+                      <TabsTrigger value="visit">{t('visit')}</TabsTrigger>
+                      <TabsTrigger value="financial">{t('financial')}</TabsTrigger>
+                    </TabsList>
+                    <ScrollArea className="h-[60vh] mt-4 pr-4">
+                      <TabsContent value="child" className="mt-0">
+                        <ChildInfoSection formData={formData} onChange={handleFormChange} t={t} />
+                      </TabsContent>
+                      <TabsContent value="parents" className="mt-0">
+                        <ParentInfoSection formData={formData} onChange={handleFormChange} t={t} />
+                      </TabsContent>
+                      <TabsContent value="visit" className="mt-0">
+                        <VisitDetailsSection formData={formData} onChange={handleFormChange} t={t} />
+                      </TabsContent>
+                      <TabsContent value="financial" className="mt-0">
+                        <FinancialSection formData={formData} onChange={handleFormChange} t={t} />
+                      </TabsContent>
+                    </ScrollArea>
+                  </Tabs>
+                  <div className="flex gap-3 pt-4 border-t mt-4">
+                    <Button type="submit" className="flex-1 gradient-primary">
+                      {t('save')}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => setIsModalOpen(false)}
+                    >
+                      {t('cancel')}
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
+
+        {/* Bulk Email Modal */}
+        <Dialog open={isBulkEmailModalOpen} onOpenChange={setIsBulkEmailModalOpen}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Send Bulk Email
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 mt-4">
+              <p className="text-sm text-muted-foreground">
+                Sending email to {selectedVisitors.size} selected visitor(s). 
+                Use <code className="bg-muted px-1 rounded">{'{child_name}'}</code> to personalize with the child's name.
+              </p>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email-subject">Subject</Label>
+                <Input
+                  id="email-subject"
+                  placeholder="Enter email subject..."
+                  value={bulkEmailSubject}
+                  onChange={(e) => setBulkEmailSubject(e.target.value)}
+                  maxLength={200}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email-message">Message</Label>
+                <Textarea
+                  id="email-message"
+                  placeholder="Enter your message..."
+                  value={bulkEmailMessage}
+                  onChange={(e) => setBulkEmailMessage(e.target.value)}
+                  rows={6}
+                  maxLength={5000}
+                />
+                <p className="text-xs text-muted-foreground text-right">
+                  {bulkEmailMessage.length}/5000
+                </p>
+              </div>
+              
+              <div className="flex gap-3 pt-2">
+                <Button
+                  onClick={handleSendBulkEmail}
+                  disabled={sendingBulkEmail || !bulkEmailSubject.trim() || !bulkEmailMessage.trim()}
+                  className="flex-1 gradient-primary"
+                >
+                  {sendingBulkEmail ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="h-4 w-4 mr-2" />
+                      Send Emails
+                    </>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsBulkEmailModalOpen(false)}
+                >
+                  {t('cancel')}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Filters */}
         <MaterialCard hover={false}>
@@ -446,6 +637,13 @@ export default function Visitors() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[40px]">
+                      <Checkbox
+                        checked={selectedVisitors.size === filteredVisitors.length && filteredVisitors.length > 0}
+                        onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                        aria-label="Select all"
+                      />
+                    </TableHead>
                     <TableHead>{t('childName')}</TableHead>
                     <TableHead>{t('targetGrade')}</TableHead>
                     <TableHead>{t('visitDate')}</TableHead>
@@ -456,7 +654,17 @@ export default function Visitors() {
                 </TableHeader>
                 <TableBody>
                   {filteredVisitors.map((visitor) => (
-                    <TableRow key={visitor.id} className="animate-fade-in">
+                    <TableRow 
+                      key={visitor.id} 
+                      className={`animate-fade-in ${selectedVisitors.has(visitor.id) ? 'bg-muted/50' : ''}`}
+                    >
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedVisitors.has(visitor.id)}
+                          onCheckedChange={(checked) => handleSelectVisitor(visitor.id, checked as boolean)}
+                          aria-label={`Select ${visitor.child_first_name}`}
+                        />
+                      </TableCell>
                       <TableCell className="font-medium">
                         {visitor.child_first_name} {visitor.child_last_name}
                       </TableCell>

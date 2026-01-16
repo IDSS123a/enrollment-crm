@@ -2,3 +2,9 @@ project_id = "rdymuwbotklotlxqiwyc"
 
 [functions.send-enrollment-notification]
 verify_jwt = false
+
+[functions.send-bulk-email]
+verify_jwt = false
+
+[functions.send-visit-reminders]
+verify_jwt = false
