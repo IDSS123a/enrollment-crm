@@ -132,6 +132,10 @@ export default function Visitors() {
       scholarship_type: formData.scholarship_type || null,
     };
 
+    // Check if status is changing to enrolled (for notifications)
+    const isNewEnrollment = formData.status === 'enrolled' && 
+      (!editingVisitor || editingVisitor.status !== 'enrolled');
+
     try {
       if (editingVisitor) {
         const { error } = await supabase
@@ -157,6 +161,50 @@ export default function Visitors() {
         }]);
         
         toast({ title: 'Success', description: t('saveSuccess') });
+      }
+
+      // Send enrollment notification email if status changed to enrolled
+      if (isNewEnrollment) {
+        const parentEmail = formData.mother_email || formData.father_email || formData.guardian_email;
+        
+        if (parentEmail) {
+          try {
+            const { error: emailError } = await supabase.functions.invoke('send-enrollment-notification', {
+              body: {
+                visitorId: editingVisitor?.id || 'new',
+                childFirstName: formData.child_first_name,
+                childLastName: formData.child_last_name,
+                parentEmail: parentEmail,
+                targetGrade: formData.target_grade,
+                schoolYear: formData.target_school_year,
+              },
+            });
+
+            if (emailError) {
+              console.error('Failed to send enrollment email:', emailError);
+              toast({
+                title: 'Note',
+                description: 'Saved successfully, but enrollment email could not be sent.',
+                variant: 'default',
+              });
+            } else {
+              toast({
+                title: 'Email Sent',
+                description: `Enrollment confirmation sent to ${parentEmail}`,
+              });
+            }
+          } catch (emailErr) {
+            console.error('Email notification error:', emailErr);
+          }
+        }
+
+        // Log enrollment activity
+        await supabase.from('activities').insert([{
+          user_id: user?.id,
+          title: `Enrolled: ${formData.child_first_name} ${formData.child_last_name}`,
+          type: 'enrollment',
+          icon: 'graduation-cap',
+        }]);
       }
 
       setIsModalOpen(false);
