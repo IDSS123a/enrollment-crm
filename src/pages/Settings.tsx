@@ -17,7 +17,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { User, Palette, Globe, Bell, Save, Loader2 } from 'lucide-react';
+import { User, Palette, Globe, Bell, Save, Loader2, Mail } from 'lucide-react';
+import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 
 export default function Settings() {
   const { profile, updateProfile } = useAuth();
@@ -184,6 +185,18 @@ export default function Settings() {
               <Switch defaultChecked />
             </div>
           </div>
+        </MaterialCard>
+
+        {/* Email Templates */}
+        <MaterialCard>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 rounded-lg gradient-primary">
+              <Mail className="h-5 w-5 text-white" />
+            </div>
+            <h2 className="text-lg font-semibold text-foreground">Email Templates</h2>
+          </div>
+          
+          <EmailTemplatesEditor />
         </MaterialCard>
       </div>
     </AppLayout>

@@ -25,6 +25,33 @@ interface VisitorEmailData {
   guardian_email: string | null;
 }
 
+const DEFAULT_BODY = `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px 30px; border-radius: 10px 10px 0 0;">
+    <h1 style="color: white; margin: 0; font-size: 22px;">IDSS Pro CRM</h1>
+  </div>
+  
+  <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e5e7eb; border-top: none;">
+    <p style="font-size: 16px; margin-bottom: 20px;">
+      Dear Parent/Guardian of <strong>{child_name}</strong>,
+    </p>
+    
+    <div style="font-size: 16px; margin-bottom: 20px;">
+      {message}
+    </div>
+    
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+    
+    <p style="font-size: 14px; color: #6b7280; margin: 0;">
+      Best regards,<br>
+      <strong>The Admissions Team</strong>
+    </p>
+  </div>
+  
+  <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-top: 20px;">
+    This is an automated message from IDSS Pro CRM.
+  </p>
+</div>`;
+
 const handler = async (req: Request): Promise<Response> => {
   console.log("Bulk email function called");
 
@@ -71,6 +98,22 @@ const handler = async (req: Request): Promise<Response> => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Fetch custom template
+    let bodyTemplate = DEFAULT_BODY;
+
+    const { data: template, error: templateError } = await supabase
+      .from("email_templates")
+      .select("body_html, is_active")
+      .eq("template_type", "bulk_email")
+      .single();
+
+    if (!templateError && template && template.is_active) {
+      bodyTemplate = template.body_html;
+      console.log("Using custom bulk email template");
+    } else {
+      console.log("Using default bulk email template");
+    }
+
     // Fetch visitor data
     const { data: visitors, error: fetchError } = await supabase
       .from("visitors")
@@ -111,45 +154,17 @@ const handler = async (req: Request): Promise<Response> => {
           .replace(/>/g, "&gt;")
           .replace(/\n/g, "<br>");
 
+        // Replace variables in template
+        let bodyHtml = bodyTemplate
+          .replace(/\{child_name\}/g, childName)
+          .replace(/\{message\}/g, sanitizedMessage)
+          .replace(/\{subject\}/g, subject);
+
         await resend.emails.send({
           from: "IDSS Pro CRM <onboarding@resend.dev>",
           to: [email],
           subject: subject,
-          html: `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            </head>
-            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px 30px; border-radius: 10px 10px 0 0;">
-                <h1 style="color: white; margin: 0; font-size: 22px;">IDSS Pro CRM</h1>
-              </div>
-              
-              <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e5e7eb; border-top: none;">
-                <p style="font-size: 16px; margin-bottom: 20px;">
-                  Dear Parent/Guardian of <strong>${childName}</strong>,
-                </p>
-                
-                <div style="font-size: 16px; margin-bottom: 20px;">
-                  ${sanitizedMessage}
-                </div>
-                
-                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-                
-                <p style="font-size: 14px; color: #6b7280; margin: 0;">
-                  Best regards,<br>
-                  <strong>The Admissions Team</strong>
-                </p>
-              </div>
-              
-              <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-top: 20px;">
-                This is an automated message from IDSS Pro CRM.
-              </p>
-            </body>
-            </html>
-          `,
+          html: bodyHtml,
         });
 
         results.sent++;
