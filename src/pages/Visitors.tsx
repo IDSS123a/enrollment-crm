@@ -682,7 +682,7 @@ export default function Visitors() {
                         </Badge>
                       </TableCell>
                       <TableCell className="font-medium">
-                        {visitor.total_amount_due.toLocaleString()} KM
+                        {(visitor.total_amount_due ?? 0).toLocaleString()} KM
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
