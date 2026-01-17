@@ -22,6 +22,60 @@ interface VisitorWithVisit {
   user_id: string;
 }
 
+const DEFAULT_SUBJECT = "📅 Reminder: School Visit {urgency} - {child_name}";
+const DEFAULT_BODY = `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 20px 30px; border-radius: 10px 10px 0 0;">
+    <h1 style="color: white; margin: 0; font-size: 22px;">📅 Visit Reminder</h1>
+  </div>
+  
+  <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e5e7eb; border-top: none;">
+    <p style="font-size: 16px; margin-bottom: 20px;">Dear Parent/Guardian,</p>
+    
+    <p style="font-size: 16px; margin-bottom: 20px;">
+      This is a friendly reminder about the upcoming school visit for <strong>{child_name}</strong>.
+    </p>
+    
+    <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #d97706;">Visit Details</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280;">Student:</td>
+          <td style="padding: 8px 0; font-weight: 600;">{child_name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280;">Date:</td>
+          <td style="padding: 8px 0; font-weight: 600;">{visit_date}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280;">Type:</td>
+          <td style="padding: 8px 0; font-weight: 600;">{visit_type}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280;">Target Grade:</td>
+          <td style="padding: 8px 0; font-weight: 600;">Grade {target_grade}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <div style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 20px 0;">
+      <p style="margin: 0; font-weight: 600; color: #92400e;">
+        {urgency_message}
+      </p>
+    </div>
+    
+    <p style="font-size: 16px; margin-bottom: 20px;">
+      We look forward to meeting you. If you need to reschedule, please contact us as soon as possible.
+    </p>
+    
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+    
+    <p style="font-size: 14px; color: #6b7280; margin: 0;">
+      Best regards,<br>
+      <strong>The Admissions Team</strong>
+    </p>
+  </div>
+</div>`;
+
 const handler = async (req: Request): Promise<Response> => {
   console.log("Visit reminder function called");
 
@@ -45,6 +99,24 @@ const handler = async (req: Request): Promise<Response> => {
     const dayAfterTomorrowDate = dayAfterTomorrow.toISOString().split('T')[0];
 
     console.log(`Checking for visits on ${tomorrowStart} and ${dayAfterTomorrowDate}`);
+
+    // Fetch custom template
+    let subjectTemplate = DEFAULT_SUBJECT;
+    let bodyTemplate = DEFAULT_BODY;
+
+    const { data: template, error: templateError } = await supabase
+      .from("email_templates")
+      .select("subject, body_html, is_active")
+      .eq("template_type", "visit_reminder")
+      .single();
+
+    if (!templateError && template && template.is_active) {
+      subjectTemplate = template.subject;
+      bodyTemplate = template.body_html;
+      console.log("Using custom reminder template");
+    } else {
+      console.log("Using default reminder template");
+    }
 
     // Fetch visitors with upcoming visits
     const { data: visitors, error: fetchError } = await supabase
@@ -93,82 +165,33 @@ const handler = async (req: Request): Promise<Response> => {
       
       const isVisitTomorrow = visitor.visit_date === tomorrowStart;
       const urgencyText = isVisitTomorrow ? "Tomorrow" : "In 2 Days";
+      const urgencyMessage = isVisitTomorrow ? "⚡ Your visit is tomorrow!" : "📆 Your visit is in 2 days.";
       const visitTypeText = visitor.visit_type === 'in_person' ? 'In-Person Visit' : 'Online Meeting';
+
+      // Replace variables
+      const variables: Record<string, string> = {
+        child_name: childName,
+        visit_date: formattedDate,
+        visit_type: visitTypeText,
+        target_grade: visitor.target_grade || "N/A",
+        urgency: urgencyText,
+        urgency_message: urgencyMessage,
+      };
+
+      let subject = subjectTemplate;
+      let bodyHtml = bodyTemplate;
+
+      Object.entries(variables).forEach(([key, value]) => {
+        subject = subject.replace(new RegExp(`\\{${key}\\}`, 'g'), value);
+        bodyHtml = bodyHtml.replace(new RegExp(`\\{${key}\\}`, 'g'), value);
+      });
 
       try {
         await resend.emails.send({
           from: "IDSS Pro CRM <onboarding@resend.dev>",
           to: [email],
-          subject: `📅 Reminder: School Visit ${urgencyText} - ${childName}`,
-          html: `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            </head>
-            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 20px 30px; border-radius: 10px 10px 0 0;">
-                <h1 style="color: white; margin: 0; font-size: 22px;">📅 Visit Reminder</h1>
-              </div>
-              
-              <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e5e7eb; border-top: none;">
-                <p style="font-size: 16px; margin-bottom: 20px;">
-                  Dear Parent/Guardian,
-                </p>
-                
-                <p style="font-size: 16px; margin-bottom: 20px;">
-                  This is a friendly reminder about the upcoming school visit for <strong>${childName}</strong>.
-                </p>
-                
-                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; margin: 20px 0;">
-                  <h3 style="margin-top: 0; color: #d97706;">Visit Details</h3>
-                  <table style="width: 100%; border-collapse: collapse;">
-                    <tr>
-                      <td style="padding: 8px 0; color: #6b7280;">Student:</td>
-                      <td style="padding: 8px 0; font-weight: 600;">${childName}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 8px 0; color: #6b7280;">Date:</td>
-                      <td style="padding: 8px 0; font-weight: 600;">${formattedDate}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 8px 0; color: #6b7280;">Type:</td>
-                      <td style="padding: 8px 0; font-weight: 600;">${visitTypeText}</td>
-                    </tr>
-                    ${visitor.target_grade ? `
-                    <tr>
-                      <td style="padding: 8px 0; color: #6b7280;">Target Grade:</td>
-                      <td style="padding: 8px 0; font-weight: 600;">Grade ${visitor.target_grade}</td>
-                    </tr>
-                    ` : ''}
-                  </table>
-                </div>
-                
-                <div style="background: ${isVisitTomorrow ? '#fef3c7' : '#dbeafe'}; padding: 15px; border-radius: 8px; border-left: 4px solid ${isVisitTomorrow ? '#f59e0b' : '#3b82f6'}; margin: 20px 0;">
-                  <p style="margin: 0; font-weight: 600; color: ${isVisitTomorrow ? '#92400e' : '#1e40af'};">
-                    ${isVisitTomorrow ? '⚡ Your visit is tomorrow!' : '📆 Your visit is in 2 days.'}
-                  </p>
-                </div>
-                
-                <p style="font-size: 16px; margin-bottom: 20px;">
-                  We look forward to meeting you and ${visitor.child_first_name}. If you need to reschedule, please contact us as soon as possible.
-                </p>
-                
-                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-                
-                <p style="font-size: 14px; color: #6b7280; margin: 0;">
-                  Best regards,<br>
-                  <strong>The Admissions Team</strong>
-                </p>
-              </div>
-              
-              <p style="font-size: 12px; color: #9ca3af; text-align: center; margin-top: 20px;">
-                This is an automated reminder from IDSS Pro CRM.
-              </p>
-            </body>
-            </html>
-          `,
+          subject: subject,
+          html: bodyHtml,
         });
 
         results.sent++;
