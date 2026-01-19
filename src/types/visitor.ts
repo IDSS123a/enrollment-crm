@@ -77,6 +77,9 @@ export interface Visitor {
   // Extended stay
   uses_extended_stay: boolean;
   
+  // Email tracking
+  after_visit_email_sent_at: string | null;
+  
   // Metadata
   created_at: string;
   updated_at: string;

@@ -39,7 +39,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Search, Edit, Trash2, Loader2, Calendar, User, GraduationCap, TrendingUp, Mail, Bell, Heart } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Loader2, Calendar, User, GraduationCap, TrendingUp, Mail, Bell, Heart, CheckCircle2, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -76,6 +76,9 @@ export default function Visitors() {
   const [sendingBulkEmail, setSendingBulkEmail] = useState(false);
   const [sendingReminders, setSendingReminders] = useState(false);
   const [sendingAfterVisit, setSendingAfterVisit] = useState(false);
+  const [isAfterVisitPreviewOpen, setIsAfterVisitPreviewOpen] = useState(false);
+  const [afterVisitTemplate, setAfterVisitTemplate] = useState<{ subject: string; body_html: string } | null>(null);
+  const [loadingTemplate, setLoadingTemplate] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -408,17 +411,67 @@ export default function Visitors() {
     }
   };
 
-  const handleSendAfterVisitEmail = async () => {
+  const loadAfterVisitTemplate = async () => {
+    setLoadingTemplate(true);
+    try {
+      const { data, error } = await supabase
+        .from('email_templates')
+        .select('subject, body_html')
+        .eq('template_type', 'after_visit')
+        .eq('is_active', true)
+        .single();
+
+      if (error) throw error;
+      setAfterVisitTemplate(data);
+    } catch (error) {
+      console.error('Failed to load template:', error);
+      toast({ title: 'Error', description: 'Failed to load email template', variant: 'destructive' });
+    } finally {
+      setLoadingTemplate(false);
+    }
+  };
+
+  const handleOpenAfterVisitPreview = async () => {
     if (selectedVisitors.size === 0) {
       toast({ title: 'Error', description: 'Please select at least one visitor', variant: 'destructive' });
       return;
     }
 
+    // Check for already sent emails
+    const selectedVisitorsList = visitors.filter(v => selectedVisitors.has(v.id));
+    const alreadySent = selectedVisitorsList.filter(v => v.after_visit_email_sent_at);
+    
+    if (alreadySent.length > 0) {
+      const names = alreadySent.map(v => `${v.child_first_name} ${v.child_last_name}`).join(', ');
+      toast({
+        title: 'Warning',
+        description: `Already sent to: ${names}. They will be skipped.`,
+        variant: 'default',
+      });
+    }
+
+    await loadAfterVisitTemplate();
+    setIsAfterVisitPreviewOpen(true);
+  };
+
+  const handleSendAfterVisitEmail = async () => {
     setSendingAfterVisit(true);
     try {
+      // Filter out visitors who already received the email
+      const visitorsToSend = Array.from(selectedVisitors).filter(id => {
+        const visitor = visitors.find(v => v.id === id);
+        return visitor && !visitor.after_visit_email_sent_at;
+      });
+
+      if (visitorsToSend.length === 0) {
+        toast({ title: 'Info', description: 'All selected visitors have already received the email', variant: 'default' });
+        setIsAfterVisitPreviewOpen(false);
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('send-after-visit-email', {
         body: {
-          visitorIds: Array.from(selectedVisitors),
+          visitorIds: visitorsToSend,
           userId: user?.id,
         },
       });
@@ -432,6 +485,8 @@ export default function Visitors() {
       });
 
       setSelectedVisitors(new Set());
+      setIsAfterVisitPreviewOpen(false);
+      loadVisitors(); // Reload to update sent status
     } catch (error: any) {
       console.error('After visit email error:', error);
       toast({ title: 'Error', description: error.message || 'Failed to send emails', variant: 'destructive' });
@@ -531,7 +586,7 @@ export default function Visitors() {
                 {/* After Visit Email Button */}
                 <Button
                   variant="outline"
-                  onClick={handleSendAfterVisitEmail}
+                  onClick={handleOpenAfterVisitPreview}
                   disabled={sendingAfterVisit}
                 >
                   {sendingAfterVisit ? (
@@ -753,9 +808,16 @@ export default function Visitors() {
                           : '-'}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className={statusColors[visitor.status]}>
-                          {t(visitor.status === 'enrolled' ? 'enrolledStatus' : visitor.status)}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className={statusColors[visitor.status]}>
+                            {t(visitor.status === 'enrolled' ? 'enrolledStatus' : visitor.status)}
+                          </Badge>
+                          {visitor.after_visit_email_sent_at && (
+                            <span title={`Thank you sent: ${format(new Date(visitor.after_visit_email_sent_at), 'MMM d, yyyy')}`}>
+                              <Heart className="h-3 w-3 text-pink-500 fill-pink-500" />
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium">
                         {(visitor.total_amount_due ?? 0).toLocaleString()} KM
@@ -785,6 +847,100 @@ export default function Visitors() {
             </div>
           )}
         </MaterialCard>
+
+        {/* After Visit Email Preview Dialog */}
+        <Dialog open={isAfterVisitPreviewOpen} onOpenChange={setIsAfterVisitPreviewOpen}>
+          <DialogContent className="max-w-3xl max-h-[90vh]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Eye className="h-5 w-5" />
+                Preview: After Visit Thank You Email
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              {/* Recipients summary */}
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-medium mb-2">Recipients ({selectedVisitors.size})</h4>
+                <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
+                  {visitors
+                    .filter(v => selectedVisitors.has(v.id))
+                    .map(v => (
+                      <Badge 
+                        key={v.id} 
+                        variant={v.after_visit_email_sent_at ? "secondary" : "outline"}
+                        className="flex items-center gap-1"
+                      >
+                        {v.child_first_name} {v.child_last_name}
+                        {v.after_visit_email_sent_at && (
+                          <CheckCircle2 className="h-3 w-3 text-success" />
+                        )}
+                      </Badge>
+                    ))
+                  }
+                </div>
+                {visitors.filter(v => selectedVisitors.has(v.id) && v.after_visit_email_sent_at).length > 0 && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    <CheckCircle2 className="h-3 w-3 inline mr-1" />
+                    Already sent - will be skipped
+                  </p>
+                )}
+              </div>
+
+              {/* Email preview */}
+              {loadingTemplate ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                </div>
+              ) : afterVisitTemplate ? (
+                <div className="space-y-3">
+                  <div>
+                    <Label className="text-sm text-muted-foreground">Subject</Label>
+                    <p className="font-medium">{afterVisitTemplate.subject}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm text-muted-foreground">Email Content</Label>
+                    <ScrollArea className="h-[300px] border rounded-lg p-4 bg-background">
+                      <div 
+                        dangerouslySetInnerHTML={{ 
+                          __html: afterVisitTemplate.body_html
+                            .replace(/{child_name}/g, '<span class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">{child_name}</span>')
+                            .replace(/{parent_name}/g, '<span class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">{parent_name}</span>')
+                            .replace(/{visit_date}/g, '<span class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">{visit_date}</span>')
+                        }} 
+                      />
+                    </ScrollArea>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Highlighted variables will be replaced with actual visitor data
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  No template found. Please create an "after_visit" template in Settings.
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button variant="outline" onClick={() => setIsAfterVisitPreviewOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSendAfterVisitEmail}
+                  disabled={sendingAfterVisit || !afterVisitTemplate}
+                  className="gradient-primary"
+                >
+                  {sendingAfterVisit ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Mail className="h-4 w-4 mr-2" />
+                  )}
+                  Send to {visitors.filter(v => selectedVisitors.has(v.id) && !v.after_visit_email_sent_at).length} Visitors
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );

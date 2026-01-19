@@ -104,6 +104,12 @@ const handler = async (req: Request): Promise<Response> => {
         });
         results.sent++;
         console.log(`After visit email sent to ${recipientEmail}`);
+
+        // Mark as sent in database
+        await supabase
+          .from("visitors")
+          .update({ after_visit_email_sent_at: new Date().toISOString() })
+          .eq("id", visitor.id);
       } catch (emailErr) {
         console.error(`Failed to send to ${recipientEmail}:`, emailErr);
         results.failed++;
