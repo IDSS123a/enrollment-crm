@@ -286,6 +286,7 @@ export type Database = {
       }
       visitors: {
         Row: {
+          after_visit_email_sent_at: string | null
           child_address: string
           child_citizenship: string
           child_date_of_birth: string
@@ -336,6 +337,7 @@ export type Database = {
           visit_type: Database["public"]["Enums"]["visit_type"]
         }
         Insert: {
+          after_visit_email_sent_at?: string | null
           child_address: string
           child_citizenship: string
           child_date_of_birth: string
@@ -386,6 +388,7 @@ export type Database = {
           visit_type?: Database["public"]["Enums"]["visit_type"]
         }
         Update: {
+          after_visit_email_sent_at?: string | null
           child_address?: string
           child_citizenship?: string
           child_date_of_birth?: string
