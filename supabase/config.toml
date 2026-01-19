@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.send-visit-reminders]
 verify_jwt = false
+
+[functions.send-after-visit-email]
+verify_jwt = false
