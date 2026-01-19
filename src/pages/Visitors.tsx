@@ -39,7 +39,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Search, Edit, Trash2, Loader2, Calendar, User, GraduationCap, TrendingUp, Mail, Bell } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Loader2, Calendar, User, GraduationCap, TrendingUp, Mail, Bell, Heart } from 'lucide-react';
 import { format } from 'date-fns';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -75,6 +75,7 @@ export default function Visitors() {
   const [bulkEmailMessage, setBulkEmailMessage] = useState('');
   const [sendingBulkEmail, setSendingBulkEmail] = useState(false);
   const [sendingReminders, setSendingReminders] = useState(false);
+  const [sendingAfterVisit, setSendingAfterVisit] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -146,6 +147,10 @@ export default function Visitors() {
     // Check if status is changing to enrolled (for notifications)
     const isNewEnrollment = formData.status === 'enrolled' && 
       (!editingVisitor || editingVisitor.status !== 'enrolled');
+    
+    // Check if status is changing to visited (for after visit email)
+    const isNewVisit = formData.status === 'visited' && 
+      (!editingVisitor || editingVisitor.status !== 'visited');
 
     try {
       if (editingVisitor) {
@@ -216,6 +221,29 @@ export default function Visitors() {
           type: 'enrollment',
           icon: 'graduation-cap',
         }]);
+      }
+
+      // Send after visit email if status changed to visited
+      if (isNewVisit && editingVisitor) {
+        try {
+          const { error: afterVisitError } = await supabase.functions.invoke('send-after-visit-email', {
+            body: {
+              visitorIds: [editingVisitor.id],
+              userId: user?.id,
+            },
+          });
+
+          if (afterVisitError) {
+            console.error('Failed to send after visit email:', afterVisitError);
+          } else {
+            toast({
+              title: 'Email Sent',
+              description: `After visit thank you email sent`,
+            });
+          }
+        } catch (emailErr) {
+          console.error('After visit email error:', emailErr);
+        }
       }
 
       setIsModalOpen(false);
@@ -380,6 +408,38 @@ export default function Visitors() {
     }
   };
 
+  const handleSendAfterVisitEmail = async () => {
+    if (selectedVisitors.size === 0) {
+      toast({ title: 'Error', description: 'Please select at least one visitor', variant: 'destructive' });
+      return;
+    }
+
+    setSendingAfterVisit(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-after-visit-email', {
+        body: {
+          visitorIds: Array.from(selectedVisitors),
+          userId: user?.id,
+        },
+      });
+
+      if (error) throw error;
+
+      const results = data?.results;
+      toast({
+        title: 'After Visit Emails Sent',
+        description: `${results?.sent || 0} sent, ${results?.failed || 0} failed, ${results?.skipped || 0} skipped (no email)`,
+      });
+
+      setSelectedVisitors(new Set());
+    } catch (error: any) {
+      console.error('After visit email error:', error);
+      toast({ title: 'Error', description: error.message || 'Failed to send emails', variant: 'destructive' });
+    } finally {
+      setSendingAfterVisit(false);
+    }
+  };
+
   const filteredVisitors = visitors.filter((visitor) => {
     const fullName = `${visitor.child_first_name} ${visitor.child_last_name}`.toLowerCase();
     const matchesSearch = fullName.includes(searchQuery.toLowerCase());
@@ -459,13 +519,29 @@ export default function Visitors() {
 
             {/* Bulk Email Button */}
             {selectedVisitors.size > 0 && (
-              <Button
-                variant="secondary"
-                onClick={() => setIsBulkEmailModalOpen(true)}
-              >
-                <Mail className="h-4 w-4 mr-2" />
-                Email {selectedVisitors.size} Selected
-              </Button>
+              <>
+                <Button
+                  variant="secondary"
+                  onClick={() => setIsBulkEmailModalOpen(true)}
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  Email {selectedVisitors.size} Selected
+                </Button>
+                
+                {/* After Visit Email Button */}
+                <Button
+                  variant="outline"
+                  onClick={handleSendAfterVisitEmail}
+                  disabled={sendingAfterVisit}
+                >
+                  {sendingAfterVisit ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Heart className="h-4 w-4 mr-2" />
+                  )}
+                  Send Thank You
+                </Button>
+              </>
             )}
 
             {/* Add Visitor Dialog */}
