@@ -419,7 +419,7 @@ export default function Visitors() {
         .select('subject, body_html')
         .eq('template_type', 'after_visit')
         .eq('is_active', true)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       setAfterVisitTemplate(data);

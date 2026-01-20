@@ -40,7 +40,7 @@ const handler = async (req: Request): Promise<Response> => {
       .select("*")
       .eq("template_type", "after_visit")
       .eq("is_active", true)
-      .single();
+      .maybeSingle();
 
     if (templateError || !template) {
       console.error("Template error:", templateError);
