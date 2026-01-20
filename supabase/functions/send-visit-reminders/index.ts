@@ -108,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
       .from("email_templates")
       .select("subject, body_html, is_active")
       .eq("template_type", "visit_reminder")
-      .single();
+      .maybeSingle();
 
     if (!templateError && template && template.is_active) {
       subjectTemplate = template.subject;

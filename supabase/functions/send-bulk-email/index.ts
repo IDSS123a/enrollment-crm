@@ -105,7 +105,7 @@ const handler = async (req: Request): Promise<Response> => {
       .from("email_templates")
       .select("body_html, is_active")
       .eq("template_type", "bulk_email")
-      .single();
+      .maybeSingle();
 
     if (!templateError && template && template.is_active) {
       bodyTemplate = template.body_html;

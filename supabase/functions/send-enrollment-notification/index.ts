@@ -102,7 +102,7 @@ const handler = async (req: Request): Promise<Response> => {
       .from("email_templates")
       .select("subject, body_html, is_active")
       .eq("template_type", "enrollment_confirmation")
-      .single();
+      .maybeSingle();
 
     if (!templateError && template && template.is_active) {
       subject = template.subject;
