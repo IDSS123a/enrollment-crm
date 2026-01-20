@@ -4,6 +4,7 @@ import { StatCard } from '@/components/dashboard/StatCard';
 import { MaterialCard } from '@/components/dashboard/MaterialCard';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { VisitorActivityWidget } from '@/components/dashboard/VisitorActivityWidget';
+import { UpcomingVisitsWidget } from '@/components/dashboard/UpcomingVisitsWidget';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
@@ -183,10 +184,14 @@ export default function Dashboard() {
           </MaterialCard>
         </div>
 
-        {/* Visitor Activity & Lead Sources */}
+        {/* Visitor Activity & Upcoming Visits */}
         <div className="grid gap-6 md:grid-cols-2">
           <VisitorActivityWidget />
-          
+          <UpcomingVisitsWidget />
+        </div>
+
+        {/* Lead Sources */}
+        <div className="grid gap-6 md:grid-cols-2">
           <MaterialCard title={t('leadSources')}>
             <div className="space-y-4">
               {[

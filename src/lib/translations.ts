@@ -216,6 +216,14 @@ interface TranslationStrings {
   siblingDiscount3rd: string;
   accessDenied: string;
   adminOnlyAccess: string;
+  
+  // Dashboard widgets
+  upcomingVisits: string;
+  viewAll: string;
+  noUpcomingVisits: string;
+  scheduleVisit: string;
+  today: string;
+  tomorrow: string;
 }
 
 const translations: Record<Language, TranslationStrings> = {
@@ -427,6 +435,14 @@ const translations: Record<Language, TranslationStrings> = {
     siblingDiscount3rd: 'Sibling Discount (3rd child)',
     accessDenied: 'Access Denied',
     adminOnlyAccess: 'This page is only accessible to administrators.',
+    
+    // Dashboard widgets
+    upcomingVisits: 'Upcoming Visits',
+    viewAll: 'View All',
+    noUpcomingVisits: 'No scheduled visits in the next 7 days',
+    scheduleVisit: 'Schedule a Visit',
+    today: 'Today',
+    tomorrow: 'Tomorrow',
   },
   BS: {
     loading: 'Učitavanje...',
@@ -636,6 +652,14 @@ const translations: Record<Language, TranslationStrings> = {
     siblingDiscount3rd: 'Popust za brata/sestru (3. dijete)',
     accessDenied: 'Pristup odbijen',
     adminOnlyAccess: 'Ova stranica je dostupna samo administratorima.',
+    
+    // Dashboard widgets
+    upcomingVisits: 'Predstojeće posjete',
+    viewAll: 'Vidi sve',
+    noUpcomingVisits: 'Nema zakazanih posjeta u narednih 7 dana',
+    scheduleVisit: 'Zakaži posjetu',
+    today: 'Danas',
+    tomorrow: 'Sutra',
   },
 };
 
