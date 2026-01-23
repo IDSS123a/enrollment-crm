@@ -65,7 +65,12 @@ export function UpcomingVisitsWidget() {
   const formatTime = (scheduledAt: string | null) => {
     if (!scheduledAt) return null;
     try {
-      return format(new Date(scheduledAt), 'HH:mm');
+      // Handle both full datetime and time-only formats
+      if (scheduledAt.includes('T') || scheduledAt.includes(' ')) {
+        return format(new Date(scheduledAt), 'HH:mm');
+      }
+      // Handle time-only format like "14:30:00" or "14:30"
+      return scheduledAt.substring(0, 5);
     } catch {
       return null;
     }
