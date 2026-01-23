@@ -63,6 +63,7 @@ export default function Visitors() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [emailFilter, setEmailFilter] = useState<string>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVisitor, setEditingVisitor] = useState<Visitor | null>(null);
   const [formData, setFormData] = useState<VisitorFormData>(initialVisitorFormData);
@@ -499,7 +500,9 @@ export default function Visitors() {
     const fullName = `${visitor.child_first_name} ${visitor.child_last_name}`.toLowerCase();
     const matchesSearch = fullName.includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || visitor.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesEmailFilter = emailFilter === 'all' || 
+      (emailFilter === 'not_sent' && !visitor.after_visit_email_sent_at);
+    return matchesSearch && matchesStatus && matchesEmailFilter;
   });
 
   // Calculate stats
@@ -752,6 +755,15 @@ export default function Visitors() {
                 <SelectItem value="enrolled">{t('enrolledStatus')}</SelectItem>
                 <SelectItem value="rejected">{t('rejected')}</SelectItem>
                 <SelectItem value="pending">{t('pending')}</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={emailFilter} onValueChange={setEmailFilter}>
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <SelectValue placeholder={t('filter')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('allEmailStatuses')}</SelectItem>
+                <SelectItem value="not_sent">{t('emailNotSent')}</SelectItem>
               </SelectContent>
             </Select>
           </div>

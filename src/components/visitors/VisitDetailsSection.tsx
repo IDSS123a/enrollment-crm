@@ -46,6 +46,15 @@ export function VisitDetailsSection({ formData, onChange, t }: VisitDetailsSecti
           />
         </div>
         <div>
+          <Label htmlFor="visit_time">{t('visitTime')}</Label>
+          <Input
+            id="visit_time"
+            type="time"
+            value={formData.visit_scheduled_at ? formData.visit_scheduled_at.substring(0, 5) : ''}
+            onChange={(e) => onChange({ visit_scheduled_at: e.target.value ? `${e.target.value}:00` : '' })}
+          />
+        </div>
+        <div>
           <Label htmlFor="status">{t('visitorStatus')}</Label>
           <Select
             value={formData.status}

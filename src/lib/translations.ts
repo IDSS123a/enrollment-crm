@@ -137,6 +137,9 @@ interface TranslationStrings {
   pending: string;
   referralSource: string;
   referralSourcePlaceholder: string;
+  visitTime: string;
+  emailNotSent: string;
+  allEmailStatuses: string;
   visitNotes: string;
   
   // Enrollment assessment
@@ -356,6 +359,9 @@ const translations: Record<Language, TranslationStrings> = {
     pending: 'Pending',
     referralSource: 'How did you find us?',
     referralSourcePlaceholder: 'Website, Friend, Social Media...',
+    visitTime: 'Visit Time',
+    emailNotSent: 'Email Not Sent',
+    allEmailStatuses: 'All Email Statuses',
     visitNotes: 'Visit Notes',
     
     // Enrollment assessment
@@ -573,6 +579,9 @@ const translations: Record<Language, TranslationStrings> = {
     pending: 'Na čekanju',
     referralSource: 'Kako ste saznali za nas?',
     referralSourcePlaceholder: 'Web stranica, prijatelj, društvene mreže...',
+    visitTime: 'Vrijeme posjete',
+    emailNotSent: 'Email nije poslan',
+    allEmailStatuses: 'Svi statusi emaila',
     visitNotes: 'Bilješke o posjeti',
     
     // Enrollment assessment
