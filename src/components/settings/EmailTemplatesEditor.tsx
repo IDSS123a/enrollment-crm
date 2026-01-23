@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from '@/hooks/use-toast';
@@ -22,7 +22,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Loader2, Mail, Save, Eye, Code, AlertCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2, Mail, Save, Eye, Code, AlertCircle, Plus, RefreshCw } from 'lucide-react';
 
 interface EmailTemplate {
   id: string;
@@ -37,6 +38,19 @@ interface EmailTemplate {
   updated_at: string;
 }
 
+const SAMPLE_DATA: Record<string, string> = {
+  child_name: 'John Smith',
+  parent_name: 'Jane Smith',
+  target_grade: '5',
+  school_year: '2025/2026',
+  visit_date: 'Monday, January 20, 2025',
+  visit_type: 'In-Person Visit',
+  urgency: 'Tomorrow',
+  urgency_message: '⚡ Your visit is tomorrow!',
+  message: 'This is a sample message content that would appear in your bulk emails.',
+  subject: 'Sample Subject Line',
+};
+
 export function EmailTemplatesEditor() {
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -49,10 +63,20 @@ export function EmailTemplatesEditor() {
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [editedSubject, setEditedSubject] = useState('');
   const [editedBody, setEditedBody] = useState('');
+  const [livePreview, setLivePreview] = useState('');
+  const [activeEditorTab, setActiveEditorTab] = useState('edit');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     loadTemplates();
   }, []);
+
+  // Live preview update
+  useEffect(() => {
+    if (editingTemplate) {
+      updateLivePreview(editedBody);
+    }
+  }, [editedBody]);
 
   const loadTemplates = async () => {
     try {
@@ -75,10 +99,41 @@ export function EmailTemplatesEditor() {
     }
   };
 
+  const updateLivePreview = (html: string) => {
+    let preview = html;
+    Object.entries(SAMPLE_DATA).forEach(([key, value]) => {
+      preview = preview.replace(new RegExp(`\\{${key}\\}`, 'g'), `<span class="bg-primary/20 px-1 rounded">${value}</span>`);
+    });
+    setLivePreview(preview);
+  };
+
   const handleEdit = (template: EmailTemplate) => {
     setEditingTemplate(template);
     setEditedSubject(template.subject);
     setEditedBody(template.body_html);
+    updateLivePreview(template.body_html);
+    setActiveEditorTab('edit');
+  };
+
+  const insertVariable = (variable: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = editedBody;
+    const before = text.substring(0, start);
+    const after = text.substring(end);
+    const newText = before + `{${variable}}` + after;
+    
+    setEditedBody(newText);
+    
+    // Set cursor position after inserted variable
+    setTimeout(() => {
+      textarea.focus();
+      const newPos = start + variable.length + 2;
+      textarea.setSelectionRange(newPos, newPos);
+    }, 0);
   };
 
   const handleSave = async () => {
@@ -129,25 +184,21 @@ export function EmailTemplatesEditor() {
   };
 
   const handlePreview = (template: EmailTemplate) => {
-    // Replace variables with sample data for preview
     let html = template.body_html;
-    const sampleData: Record<string, string> = {
-      child_name: 'John Smith',
-      target_grade: '5',
-      school_year: '2025/2026',
-      visit_date: 'Monday, January 20, 2025',
-      visit_type: 'In-Person Visit',
-      urgency: 'Tomorrow',
-      urgency_message: '⚡ Your visit is tomorrow!',
-      message: 'This is a sample message content that would appear in your bulk emails.',
-      subject: 'Sample Subject Line',
-    };
-
-    Object.entries(sampleData).forEach(([key, value]) => {
+    Object.entries(SAMPLE_DATA).forEach(([key, value]) => {
       html = html.replace(new RegExp(`\\{${key}\\}`, 'g'), value);
     });
-
     setPreviewHtml(html);
+  };
+
+  const getTemplateTypeLabel = (type: string) => {
+    const labels: Record<string, { label: string; color: string }> = {
+      enrollment: { label: 'Enrollment', color: 'bg-success/10 text-success' },
+      visit_reminder: { label: 'Visit Reminder', color: 'bg-warning/10 text-warning' },
+      after_visit: { label: 'After Visit', color: 'bg-info/10 text-info' },
+      bulk_email: { label: 'Bulk Email', color: 'bg-primary/10 text-primary' },
+    };
+    return labels[type] || { label: type, color: 'bg-muted text-muted-foreground' };
   };
 
   if (loading) {
@@ -175,92 +226,75 @@ export function EmailTemplatesEditor() {
         <div>
           <h2 className="text-xl font-semibold">Email Templates</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Customize the email templates sent for enrollments, reminders, and bulk emails
+            Customize email templates with live preview and variable insertion
           </p>
         </div>
+        <Button variant="outline" size="sm" onClick={loadTemplates}>
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Refresh
+        </Button>
       </div>
 
-      <Accordion type="single" collapsible className="space-y-4">
-        {templates.map((template) => (
-          <AccordionItem
-            key={template.id}
-            value={template.id}
-            className="border rounded-lg px-4 bg-card"
-          >
-            <AccordionTrigger className="hover:no-underline">
-              <div className="flex items-center gap-3 flex-1">
-                <Mail className="h-5 w-5 text-primary" />
-                <div className="flex flex-col items-start">
-                  <span className="font-medium">{template.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {template.description}
-                  </span>
+      <div className="grid gap-4">
+        {templates.map((template) => {
+          const typeInfo = getTemplateTypeLabel(template.template_type);
+          return (
+            <div 
+              key={template.id} 
+              className="p-4 rounded-xl border bg-card hover:shadow-md transition-all cursor-pointer"
+              onClick={() => handleEdit(template)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Mail className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-medium">{template.name}</h3>
+                      <Badge className={typeInfo.color}>{typeInfo.label}</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-0.5">
+                      {template.description}
+                    </p>
+                  </div>
                 </div>
-                <div className="ml-auto flex items-center gap-2 mr-4">
+                <div className="flex items-center gap-3">
                   <Badge variant={template.is_active ? 'default' : 'secondary'}>
                     {template.is_active ? 'Active' : 'Inactive'}
                   </Badge>
-                </div>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pt-4 pb-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Subject Line</Label>
-                  <p className="text-sm bg-muted p-3 rounded-md font-mono">
-                    {template.subject}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Available Variables</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {template.variables.map((variable) => (
-                      <Badge key={variable} variant="outline" className="font-mono text-xs">
-                        {`{${variable}}`}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <div className="flex items-center gap-3">
-                    <Label htmlFor={`active-${template.id}`} className="text-sm">
-                      Template Active
-                    </Label>
-                    <Switch
-                      id={`active-${template.id}`}
-                      checked={template.is_active}
-                      onCheckedChange={() => handleToggleActive(template)}
-                    />
-                  </div>
                   <div className="flex gap-2">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      onClick={() => handlePreview(template)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePreview(template);
+                      }}
                     >
-                      <Eye className="h-4 w-4 mr-2" />
-                      Preview
+                      <Eye className="h-4 w-4" />
                     </Button>
                     <Button
+                      variant="ghost"
                       size="sm"
-                      onClick={() => handleEdit(template)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(template);
+                      }}
                     >
-                      <Code className="h-4 w-4 mr-2" />
-                      Edit Template
+                      <Code className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+            </div>
+          );
+        })}
+      </div>
 
-      {/* Edit Template Modal */}
+      {/* Edit Template Modal - Full Screen */}
       <Dialog open={!!editingTemplate} onOpenChange={() => setEditingTemplate(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[95vw] w-full max-h-[95vh] h-full">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Code className="h-5 w-5" />
@@ -269,94 +303,133 @@ export function EmailTemplatesEditor() {
           </DialogHeader>
           
           {editingTemplate && (
-            <div className="space-y-6 mt-4">
-              <div className="space-y-2">
-                <Label>Available Variables</Label>
+            <div className="flex flex-col h-[calc(95vh-120px)]">
+              {/* Variable Insertion Bar */}
+              <div className="border-b pb-4 mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Plus className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Insert Variable:</span>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {editingTemplate.variables.map((variable) => (
-                    <Badge
+                    <Button
                       key={variable}
                       variant="outline"
-                      className="font-mono text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground"
-                      onClick={() => {
-                        navigator.clipboard.writeText(`{${variable}}`);
-                        toast({ title: 'Copied', description: `{${variable}} copied to clipboard` });
-                      }}
+                      size="sm"
+                      className="font-mono text-xs h-7"
+                      onClick={() => insertVariable(variable)}
                     >
                       {`{${variable}}`}
-                    </Badge>
+                    </Button>
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground">Click to copy variable</p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="subject">Subject Line</Label>
+              {/* Subject Line */}
+              <div className="mb-4">
+                <Label htmlFor="subject" className="text-sm font-medium">Subject Line</Label>
                 <Input
                   id="subject"
                   value={editedSubject}
                   onChange={(e) => setEditedSubject(e.target.value)}
                   placeholder="Email subject..."
+                  className="mt-1.5"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="body">HTML Body</Label>
-                <Textarea
-                  id="body"
-                  value={editedBody}
-                  onChange={(e) => setEditedBody(e.target.value)}
-                  placeholder="HTML email body..."
-                  className="font-mono text-sm min-h-[400px]"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Use HTML to format your email. Variables like {'{child_name}'} will be replaced with actual values.
-                </p>
+              {/* Editor and Preview Split */}
+              <div className="flex-1 min-h-0">
+                <Tabs value={activeEditorTab} onValueChange={setActiveEditorTab} className="h-full flex flex-col">
+                  <TabsList className="w-full justify-start">
+                    <TabsTrigger value="edit" className="flex items-center gap-2">
+                      <Code className="h-4 w-4" />
+                      HTML Editor
+                    </TabsTrigger>
+                    <TabsTrigger value="preview" className="flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      Live Preview
+                    </TabsTrigger>
+                    <TabsTrigger value="split" className="flex items-center gap-2">
+                      Split View
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="edit" className="flex-1 mt-4">
+                    <Textarea
+                      ref={textareaRef}
+                      value={editedBody}
+                      onChange={(e) => setEditedBody(e.target.value)}
+                      placeholder="HTML email body..."
+                      className="font-mono text-sm h-full min-h-[400px] resize-none"
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="preview" className="flex-1 mt-4">
+                    <div className="border rounded-lg h-full overflow-auto bg-white">
+                      <div
+                        className="p-4"
+                        dangerouslySetInnerHTML={{ __html: livePreview }}
+                      />
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="split" className="flex-1 mt-4">
+                    <div className="grid grid-cols-2 gap-4 h-full">
+                      <div className="flex flex-col">
+                        <Label className="mb-2 text-sm font-medium">HTML Code</Label>
+                        <Textarea
+                          ref={textareaRef}
+                          value={editedBody}
+                          onChange={(e) => setEditedBody(e.target.value)}
+                          placeholder="HTML email body..."
+                          className="font-mono text-sm flex-1 min-h-[350px] resize-none"
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <Label className="mb-2 text-sm font-medium">Preview</Label>
+                        <div className="border rounded-lg flex-1 overflow-auto bg-white">
+                          <div
+                            className="p-4"
+                            dangerouslySetInnerHTML={{ __html: livePreview }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t">
-                <Button
-                  onClick={handleSave}
-                  disabled={saving === editingTemplate.id}
-                  className="flex-1"
-                >
-                  {saving === editingTemplate.id ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <Save className="h-4 w-4 mr-2" />
-                  )}
-                  Save Changes
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    let html = editedBody;
-                    const sampleData: Record<string, string> = {
-                      child_name: 'John Smith',
-                      target_grade: '5',
-                      school_year: '2025/2026',
-                      visit_date: 'Monday, January 20, 2025',
-                      visit_type: 'In-Person Visit',
-                      urgency: 'Tomorrow',
-                      urgency_message: '⚡ Your visit is tomorrow!',
-                      message: 'Sample message content.',
-                      subject: editedSubject,
-                    };
-                    Object.entries(sampleData).forEach(([key, value]) => {
-                      html = html.replace(new RegExp(`\\{${key}\\}`, 'g'), value);
-                    });
-                    setPreviewHtml(html);
-                  }}
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  Preview
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => setEditingTemplate(null)}
-                >
-                  Cancel
-                </Button>
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between pt-4 border-t mt-4">
+                <div className="flex items-center gap-3">
+                  <Label htmlFor={`active-edit-${editingTemplate.id}`} className="text-sm">
+                    Template Active
+                  </Label>
+                  <Switch
+                    id={`active-edit-${editingTemplate.id}`}
+                    checked={editingTemplate.is_active}
+                    onCheckedChange={() => handleToggleActive(editingTemplate)}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setEditingTemplate(null)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleSave}
+                    disabled={saving === editingTemplate.id}
+                  >
+                    {saving === editingTemplate.id ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
+                    Save Changes
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -375,7 +448,7 @@ export function EmailTemplatesEditor() {
           
           <div className="mt-4 border rounded-lg overflow-hidden">
             <div
-              className="bg-white"
+              className="bg-white p-4"
               dangerouslySetInnerHTML={{ __html: previewHtml || '' }}
             />
           </div>
