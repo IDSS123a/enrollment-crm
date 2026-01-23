@@ -227,6 +227,9 @@ interface TranslationStrings {
   scheduleVisit: string;
   today: string;
   tomorrow: string;
+  conversionTrends: string;
+  exportCSV: string;
+  exportExcel: string;
 }
 
 const translations: Record<Language, TranslationStrings> = {
@@ -449,6 +452,9 @@ const translations: Record<Language, TranslationStrings> = {
     scheduleVisit: 'Schedule a Visit',
     today: 'Today',
     tomorrow: 'Tomorrow',
+    conversionTrends: 'Visitor Conversion Trends',
+    exportCSV: 'Export CSV',
+    exportExcel: 'Export Excel',
   },
   BS: {
     loading: 'Učitavanje...',
@@ -669,6 +675,9 @@ const translations: Record<Language, TranslationStrings> = {
     scheduleVisit: 'Zakaži posjetu',
     today: 'Danas',
     tomorrow: 'Sutra',
+    conversionTrends: 'Trendovi konverzije posjetilaca',
+    exportCSV: 'Izvezi CSV',
+    exportExcel: 'Izvezi Excel',
   },
 };
 

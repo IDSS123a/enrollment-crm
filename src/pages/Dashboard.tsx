@@ -5,6 +5,7 @@ import { MaterialCard } from '@/components/dashboard/MaterialCard';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { VisitorActivityWidget } from '@/components/dashboard/VisitorActivityWidget';
 import { UpcomingVisitsWidget } from '@/components/dashboard/UpcomingVisitsWidget';
+import { VisitorConversionChart } from '@/components/dashboard/VisitorConversionChart';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
@@ -188,6 +189,11 @@ export default function Dashboard() {
         <div className="grid gap-6 md:grid-cols-2">
           <VisitorActivityWidget />
           <UpcomingVisitsWidget />
+        </div>
+
+        {/* Visitor Conversion Trends */}
+        <div className="grid gap-6">
+          <VisitorConversionChart />
         </div>
 
         {/* Lead Sources */}

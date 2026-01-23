@@ -39,7 +39,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Search, Edit, Trash2, Loader2, Calendar, User, GraduationCap, TrendingUp, Mail, Bell, Heart, CheckCircle2, Eye } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Loader2, Calendar, User, GraduationCap, TrendingUp, Mail, Bell, Heart, CheckCircle2, Eye, Download, FileSpreadsheet } from 'lucide-react';
+import { exportVisitorsToCSV, exportVisitorsToExcel } from '@/utils/exportVisitors';
 import { format } from 'date-fns';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -561,6 +562,24 @@ export default function Visitors() {
             <p className="text-muted-foreground">{t('visitorsDescription')}</p>
           </div>
           <div className="flex flex-wrap gap-2">
+            {/* Export Buttons */}
+            <Button
+              variant="outline"
+              onClick={() => exportVisitorsToCSV(filteredVisitors)}
+              disabled={filteredVisitors.length === 0}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              {t('exportCSV')}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => exportVisitorsToExcel(filteredVisitors)}
+              disabled={filteredVisitors.length === 0}
+            >
+              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              {t('exportExcel')}
+            </Button>
+
             {/* Send Reminders Button */}
             <Button
               variant="outline"
