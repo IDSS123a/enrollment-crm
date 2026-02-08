@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.send-after-visit-auto]
 verify_jwt = false
+
+[functions.send-visitor-registration]
+verify_jwt = false
