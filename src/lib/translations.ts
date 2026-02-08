@@ -28,6 +28,9 @@ interface TranslationStrings {
   alreadyHaveAccount: string;
   welcomeBack: string;
   createAccount: string;
+  continueWithGoogle: string;
+  orContinueWith: string;
+  gdprNotice: string;
   
   // Navigation
   dashboard: string;
@@ -259,6 +262,9 @@ const translations: Record<Language, TranslationStrings> = {
     alreadyHaveAccount: 'Already have an account?',
     welcomeBack: 'Welcome back',
     createAccount: 'Create your account',
+    continueWithGoogle: 'Continue with Google',
+    orContinueWith: 'or continue with email',
+    gdprNotice: 'By signing in, you agree to our Privacy Policy and Terms of Service. Your data is protected in accordance with GDPR.',
     
     dashboard: 'Dashboard',
     leads: 'Leads',
@@ -482,6 +488,9 @@ const translations: Record<Language, TranslationStrings> = {
     alreadyHaveAccount: 'Već imate račun?',
     welcomeBack: 'Dobrodošli',
     createAccount: 'Kreirajte račun',
+    continueWithGoogle: 'Nastavite s Google računom',
+    orContinueWith: 'ili nastavite s emailom',
+    gdprNotice: 'Prijavom prihvatate našu Politiku privatnosti i Uvjete korištenja. Vaši podaci su zaštićeni u skladu s GDPR-om.',
     
     dashboard: 'Kontrolna tabla',
     leads: 'Kandidati',
