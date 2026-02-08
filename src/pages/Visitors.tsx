@@ -167,9 +167,11 @@ export default function Visitors() {
         if (error) throw error;
         toast({ title: 'Success', description: t('saveSuccess') });
       } else {
-        const { error } = await supabase
+        const { data: newVisitor, error } = await supabase
           .from('visitors')
-          .insert([visitorData]);
+          .insert([visitorData])
+          .select()
+          .single();
 
         if (error) throw error;
 
@@ -180,6 +182,35 @@ export default function Visitors() {
           type: 'visitor',
           icon: 'user-plus',
         }]);
+        
+        // Send registration notification email
+        const parentEmail = formData.mother_email || formData.father_email || formData.guardian_email;
+        if (parentEmail) {
+          try {
+            const { error: regEmailError } = await supabase.functions.invoke('send-visitor-registration', {
+              body: {
+                visitorId: newVisitor.id,
+                childFirstName: formData.child_first_name,
+                childLastName: formData.child_last_name,
+                parentEmail: parentEmail,
+                visitDate: formData.visit_date,
+                visitType: formData.visit_type,
+                targetGrade: formData.target_grade,
+              },
+            });
+
+            if (regEmailError) {
+              console.error('Failed to send registration email:', regEmailError);
+            } else {
+              toast({
+                title: 'Email Sent',
+                description: `Registration confirmation sent to ${parentEmail}`,
+              });
+            }
+          } catch (emailErr) {
+            console.error('Registration email error:', emailErr);
+          }
+        }
         
         toast({ title: 'Success', description: t('saveSuccess') });
       }
