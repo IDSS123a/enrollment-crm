@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { numberToText, gradeNames, toRomanNumeral, formatDateByLocale, formatCurrencyByLocale, type NumberTextLanguage } from '@/lib/numberToText';
+import { generateContractHTML, type ContractTemplateData } from '@/lib/contractTemplates';
+import { exportContractPDF, exportContractDOCX } from '@/lib/contractExport';
 import type { Visitor } from '@/types/visitor';
 
 interface Contract {
@@ -225,6 +227,49 @@ export default function Contracts() {
     setFirstPaymentDate('2025-09-05');
   };
 
+  const buildTemplateData = (contract: Contract): ContractTemplateData => {
+    const data = contract.contract_data as Record<string, any>;
+    return {
+      grade_number: data.grade_number || '',
+      grade_text: data.grade_text || '',
+      contract_date: data.contract_date || '',
+      parent1_full_name: data.parent1_full_name || '',
+      parent2_full_name: data.parent2_full_name || '',
+      child_full_name: data.child_full_name || '',
+      child_dob: data.child_dob || '',
+      address: data.address || '',
+      enrollment_fee_amount: data.enrollment_fee_amount || '0.00',
+      enrollment_fee_text: data.enrollment_fee_text || '',
+      deposit_amount: data.deposit_amount || '0.00',
+      deposit_text: data.deposit_text || '',
+      tuition_annual_amount: data.tuition_annual_amount || '0.00',
+      tuition_annual_text: data.tuition_annual_text || '',
+      installments_number: data.installments_number || '',
+      installments_text: data.installments_text || '',
+      first_payment_date: data.first_payment_date || '',
+      extended_stay_amount: data.extended_stay_amount || '0.00',
+      extended_stay_text: data.extended_stay_text || '',
+      signature_date: data.signature_date || '',
+      payment_type: data.payment_type || 'full',
+      contract_number: contract.contract_number,
+      academic_year: contract.academic_year,
+      uses_extended_stay: parseFloat(data.extended_stay_amount || '0') > 0,
+    };
+  };
+
+  const handleDownloadPDF = (contract: Contract) => {
+    const tplData = buildTemplateData(contract);
+    const html = generateContractHTML(tplData, contract.language);
+    const filename = `${contract.contract_number}-${contract.language.toUpperCase()}.pdf`;
+    exportContractPDF(html, filename);
+  };
+
+  const handleDownloadDOCX = async (contract: Contract) => {
+    const tplData = buildTemplateData(contract);
+    const filename = `${contract.contract_number}-${contract.language.toUpperCase()}.docx`;
+    await exportContractDOCX(tplData, contract.language, filename);
+  };
+
   const filteredContracts = contracts.filter(c => {
     const data = c.contract_data as Record<string, any>;
     const childName = (data?.child_full_name || '').toLowerCase();
@@ -339,6 +384,20 @@ export default function Contracts() {
                             title={t('edit')}
                           >
                             <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost" size="icon"
+                            onClick={() => handleDownloadPDF(contract)}
+                            title={t('downloadPDF')}
+                          >
+                            <FileDown className="h-4 w-4 text-destructive" />
+                          </Button>
+                          <Button
+                            variant="ghost" size="icon"
+                            onClick={() => handleDownloadDOCX(contract)}
+                            title={t('downloadDOCX')}
+                          >
+                            <Download className="h-4 w-4 text-primary" />
                           </Button>
                           {contract.status === 'generated' && (
                             <Button
