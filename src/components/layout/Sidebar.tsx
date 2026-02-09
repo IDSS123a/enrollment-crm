@@ -13,11 +13,13 @@ import {
   LogOut,
   CheckCircle,
   DollarSign,
+  FileText,
 } from 'lucide-react';
 
 const navigation = [
   { name: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'visitors', href: '/visitors', icon: UserCheck },
+  { name: 'contracts', href: '/contracts', icon: FileText },
   { name: 'leads', href: '/leads', icon: Users },
   { name: 'analytics', href: '/analytics', icon: BarChart3 },
   { name: 'campaigns', href: '/campaigns', icon: Megaphone },

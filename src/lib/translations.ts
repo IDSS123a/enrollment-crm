@@ -1,4 +1,4 @@
-export type Language = 'EN' | 'BS';
+export type Language = 'EN' | 'BS' | 'DE';
 
 interface TranslationStrings {
   // Common
@@ -39,6 +39,7 @@ interface TranslationStrings {
   campaigns: string;
   settings: string;
   visitors: string;
+  contracts: string;
   
   // Dashboard
   totalLeads: string;
@@ -233,6 +234,42 @@ interface TranslationStrings {
   conversionTrends: string;
   exportCSV: string;
   exportExcel: string;
+
+  // Contracts
+  generateContract: string;
+  contractsList: string;
+  contractsDescription: string;
+  contractNumber: string;
+  contractDate: string;
+  contractStatus: string;
+  contractLanguage: string;
+  contractDraft: string;
+  contractGenerated: string;
+  contractSent: string;
+  contractSigned: string;
+  downloadPDF: string;
+  downloadDOCX: string;
+  sendContract: string;
+  markSigned: string;
+  verifyInformation: string;
+  confirmFinancials: string;
+  setDates: string;
+  previewGenerate: string;
+  contractGenerateSuccess: string;
+  contractSendSuccess: string;
+  contractSignedSuccess: string;
+  noContracts: string;
+  childMustBeEnrolled: string;
+  contractAlreadyExists: string;
+  parentInfoMissing: string;
+  firstPaymentDate: string;
+  signatureDate: string;
+  enrollmentAgreement: string;
+  annualTuition: string;
+  monthlyInstallment: string;
+  totalContractsLabel: string;
+  signedContractsLabel: string;
+  pendingContractsLabel: string;
 }
 
 const translations: Record<Language, TranslationStrings> = {
@@ -272,6 +309,7 @@ const translations: Record<Language, TranslationStrings> = {
     campaigns: 'Campaigns',
     settings: 'Settings',
     visitors: 'Visitors',
+    contracts: 'Contracts',
     
     totalLeads: 'Total Leads',
     conversionRate: 'Conversion Rate',
@@ -321,7 +359,6 @@ const translations: Record<Language, TranslationStrings> = {
     loginError: 'Login failed. Please check your credentials.',
     signupSuccess: 'Account created successfully!',
 
-    // Visitors
     visitorsDescription: 'Manage school visitors and enrollment applications',
     addVisitor: 'Add Visitor',
     editVisitor: 'Edit Visitor',
@@ -331,13 +368,11 @@ const translations: Record<Language, TranslationStrings> = {
     conversionRateVisit: 'Conversion Rate',
     visitToEnrollment: 'Visit to enrollment',
     
-    // Visitor form tabs
     child: 'Child',
     parents: 'Parents',
     visit: 'Visit',
     financial: 'Financial',
     
-    // Child info
     childInfo: 'Child Information',
     firstName: 'First Name',
     lastName: 'Last Name',
@@ -347,7 +382,6 @@ const translations: Record<Language, TranslationStrings> = {
     addressPlaceholder: 'City, Street and Number, ZIP',
     childName: 'Child Name',
     
-    // Parent info
     parentInfo: 'Parent/Guardian Information',
     mother: 'Mother',
     father: 'Father',
@@ -355,7 +389,6 @@ const translations: Record<Language, TranslationStrings> = {
     phone: 'Phone',
     profession: 'Profession',
     
-    // Visit details
     visitDetails: 'Visit Details',
     visitType: 'Visit Type',
     inPerson: 'In Person',
@@ -373,7 +406,6 @@ const translations: Record<Language, TranslationStrings> = {
     allEmailStatuses: 'All Email Statuses',
     visitNotes: 'Visit Notes',
     
-    // Enrollment assessment
     enrollmentAssessment: 'Enrollment Assessment',
     enrollmentDecision: 'Decision',
     selectDecision: 'Select decision',
@@ -384,7 +416,6 @@ const translations: Record<Language, TranslationStrings> = {
     decisionNotes: 'Decision Notes',
     decisionNotesPlaceholder: 'Notes about the enrollment decision...',
     
-    // Financial
     financialDetails: 'Financial Details',
     targetGrade: 'Target Grade',
     selectGrade: 'Select grade',
@@ -401,7 +432,6 @@ const translations: Record<Language, TranslationStrings> = {
     installments: 'Installments',
     monthsToPay: 'Months to Pay',
     
-    // Discounts
     discountsWaivers: 'Discounts & Waivers',
     siblingDiscount: 'Sibling Discount',
     noDiscount: 'No Discount',
@@ -413,7 +443,6 @@ const translations: Record<Language, TranslationStrings> = {
     registrationFeeWaived: 'Registration Fee Waived',
     usesExtendedStay: 'Uses Extended Stay Program',
     
-    // Fee summary
     feeSummary: 'Fee Summary',
     registrationFee: 'Registration Fee',
     deposit: 'Deposit',
@@ -425,7 +454,6 @@ const translations: Record<Language, TranslationStrings> = {
     months: 'months',
     totalAmountDue: 'Total Amount Due',
     
-    // Pricing Management
     pricingManagement: 'Pricing Management',
     manageFees: 'Manage school fees and discounts',
     saveChanges: 'Save Changes',
@@ -451,7 +479,6 @@ const translations: Record<Language, TranslationStrings> = {
     accessDenied: 'Access Denied',
     adminOnlyAccess: 'This page is only accessible to administrators.',
     
-    // Dashboard widgets
     upcomingVisits: 'Upcoming Visits',
     viewAll: 'View All',
     noUpcomingVisits: 'No scheduled visits in the next 7 days',
@@ -461,7 +488,44 @@ const translations: Record<Language, TranslationStrings> = {
     conversionTrends: 'Visitor Conversion Trends',
     exportCSV: 'Export CSV',
     exportExcel: 'Export Excel',
+
+    // Contracts
+    generateContract: 'Generate Contract',
+    contractsList: 'Contracts',
+    contractsDescription: 'Manage enrollment contracts',
+    contractNumber: 'Contract Number',
+    contractDate: 'Contract Date',
+    contractStatus: 'Status',
+    contractLanguage: 'Contract Language',
+    contractDraft: 'Draft',
+    contractGenerated: 'Generated',
+    contractSent: 'Sent',
+    contractSigned: 'Signed',
+    downloadPDF: 'Download PDF',
+    downloadDOCX: 'Download DOCX',
+    sendContract: 'Send Contract',
+    markSigned: 'Mark as Signed',
+    verifyInformation: 'Verify Information',
+    confirmFinancials: 'Confirm Financials',
+    setDates: 'Set Dates',
+    previewGenerate: 'Preview & Generate',
+    contractGenerateSuccess: 'Contract generated successfully',
+    contractSendSuccess: 'Contract sent successfully',
+    contractSignedSuccess: 'Contract marked as signed',
+    noContracts: 'No contracts yet',
+    childMustBeEnrolled: 'Child must be enrolled before generating a contract',
+    contractAlreadyExists: 'Contract already exists for this academic year',
+    parentInfoMissing: 'Parent information is missing',
+    firstPaymentDate: 'First Payment Date',
+    signatureDate: 'Signature Date',
+    enrollmentAgreement: 'Enrollment Agreement',
+    annualTuition: 'Annual Tuition',
+    monthlyInstallment: 'Monthly Installment',
+    totalContractsLabel: 'Total Contracts',
+    signedContractsLabel: 'Signed',
+    pendingContractsLabel: 'Pending',
   },
+
   BS: {
     loading: 'Učitavanje...',
     save: 'Sačuvaj',
@@ -498,6 +562,7 @@ const translations: Record<Language, TranslationStrings> = {
     campaigns: 'Kampanje',
     settings: 'Postavke',
     visitors: 'Posjetioci',
+    contracts: 'Ugovori',
     
     totalLeads: 'Ukupno kandidata',
     conversionRate: 'Stopa konverzije',
@@ -547,7 +612,6 @@ const translations: Record<Language, TranslationStrings> = {
     loginError: 'Prijava nije uspjela. Provjerite podatke.',
     signupSuccess: 'Račun je uspješno kreiran!',
 
-    // Visitors
     visitorsDescription: 'Upravljanje posjetiocima škole i prijavama za upis',
     addVisitor: 'Dodaj posjetioca',
     editVisitor: 'Uredi posjetioca',
@@ -557,13 +621,11 @@ const translations: Record<Language, TranslationStrings> = {
     conversionRateVisit: 'Stopa konverzije',
     visitToEnrollment: 'Posjeta do upisa',
     
-    // Visitor form tabs
     child: 'Dijete',
     parents: 'Roditelji',
     visit: 'Posjeta',
     financial: 'Financije',
     
-    // Child info
     childInfo: 'Informacije o djetetu',
     firstName: 'Ime',
     lastName: 'Prezime',
@@ -573,7 +635,6 @@ const translations: Record<Language, TranslationStrings> = {
     addressPlaceholder: 'Mjesto, ulica i broj, poštanski broj',
     childName: 'Ime djeteta',
     
-    // Parent info
     parentInfo: 'Informacije o roditeljima/starateljima',
     mother: 'Majka',
     father: 'Otac',
@@ -581,7 +642,6 @@ const translations: Record<Language, TranslationStrings> = {
     phone: 'Telefon',
     profession: 'Zanimanje',
     
-    // Visit details
     visitDetails: 'Detalji posjete',
     visitType: 'Tip posjete',
     inPerson: 'Uživo',
@@ -599,7 +659,6 @@ const translations: Record<Language, TranslationStrings> = {
     allEmailStatuses: 'Svi statusi emaila',
     visitNotes: 'Bilješke o posjeti',
     
-    // Enrollment assessment
     enrollmentAssessment: 'Procjena upisa',
     enrollmentDecision: 'Odluka',
     selectDecision: 'Odaberite odluku',
@@ -610,7 +669,6 @@ const translations: Record<Language, TranslationStrings> = {
     decisionNotes: 'Bilješke o odluci',
     decisionNotesPlaceholder: 'Bilješke o odluci o upisu...',
     
-    // Financial
     financialDetails: 'Financijski detalji',
     targetGrade: 'Ciljni razred',
     selectGrade: 'Odaberite razred',
@@ -627,7 +685,6 @@ const translations: Record<Language, TranslationStrings> = {
     installments: 'Na rate',
     monthsToPay: 'Broj mjeseci',
     
-    // Discounts
     discountsWaivers: 'Popusti i oslobođenja',
     siblingDiscount: 'Popust za brata/sestru',
     noDiscount: 'Bez popusta',
@@ -639,7 +696,6 @@ const translations: Record<Language, TranslationStrings> = {
     registrationFeeWaived: 'Oslobođenje od upisnine',
     usesExtendedStay: 'Koristi produženi boravak',
     
-    // Fee summary
     feeSummary: 'Pregled troškova',
     registrationFee: 'Upisnina',
     deposit: 'Depozit',
@@ -651,7 +707,6 @@ const translations: Record<Language, TranslationStrings> = {
     months: 'mjeseci',
     totalAmountDue: 'Ukupno za plaćanje',
     
-    // Pricing Management
     pricingManagement: 'Upravljanje cijenama',
     manageFees: 'Upravljanje školskim naknadama i popustima',
     saveChanges: 'Sačuvaj izmjene',
@@ -677,7 +732,6 @@ const translations: Record<Language, TranslationStrings> = {
     accessDenied: 'Pristup odbijen',
     adminOnlyAccess: 'Ova stranica je dostupna samo administratorima.',
     
-    // Dashboard widgets
     upcomingVisits: 'Predstojeće posjete',
     viewAll: 'Vidi sve',
     noUpcomingVisits: 'Nema zakazanih posjeta u narednih 7 dana',
@@ -687,6 +741,295 @@ const translations: Record<Language, TranslationStrings> = {
     conversionTrends: 'Trendovi konverzije posjetilaca',
     exportCSV: 'Izvezi CSV',
     exportExcel: 'Izvezi Excel',
+
+    // Contracts
+    generateContract: 'Generiši ugovor',
+    contractsList: 'Ugovori',
+    contractsDescription: 'Upravljanje ugovorima o upisu',
+    contractNumber: 'Broj ugovora',
+    contractDate: 'Datum ugovora',
+    contractStatus: 'Status',
+    contractLanguage: 'Jezik ugovora',
+    contractDraft: 'Nacrt',
+    contractGenerated: 'Generisan',
+    contractSent: 'Poslan',
+    contractSigned: 'Potpisan',
+    downloadPDF: 'Preuzmi PDF',
+    downloadDOCX: 'Preuzmi DOCX',
+    sendContract: 'Pošalji ugovor',
+    markSigned: 'Označi kao potpisan',
+    verifyInformation: 'Provjeri podatke',
+    confirmFinancials: 'Potvrdi financije',
+    setDates: 'Postavi datume',
+    previewGenerate: 'Pregled i generisanje',
+    contractGenerateSuccess: 'Ugovor je uspješno generisan',
+    contractSendSuccess: 'Ugovor je uspješno poslan',
+    contractSignedSuccess: 'Ugovor je označen kao potpisan',
+    noContracts: 'Još nema ugovora',
+    childMustBeEnrolled: 'Dijete mora biti upisano prije generisanja ugovora',
+    contractAlreadyExists: 'Ugovor već postoji za ovu školsku godinu',
+    parentInfoMissing: 'Nedostaju podaci o roditeljima',
+    firstPaymentDate: 'Datum prvog plaćanja',
+    signatureDate: 'Datum potpisa',
+    enrollmentAgreement: 'Ugovor o upisu',
+    annualTuition: 'Godišnja školarina',
+    monthlyInstallment: 'Mjesečna rata',
+    totalContractsLabel: 'Ukupno ugovora',
+    signedContractsLabel: 'Potpisani',
+    pendingContractsLabel: 'Na čekanju',
+  },
+
+  DE: {
+    loading: 'Laden...',
+    save: 'Speichern',
+    cancel: 'Abbrechen',
+    delete: 'Löschen',
+    edit: 'Bearbeiten',
+    add: 'Hinzufügen',
+    search: 'Suchen',
+    filter: 'Filter',
+    export: 'Exportieren',
+    noData: 'Keine Daten verfügbar',
+    actions: 'Aktionen',
+    confirmDelete: 'Sind Sie sicher, dass Sie dies löschen möchten?',
+    allStatuses: 'Alle Status',
+    
+    login: 'Anmelden',
+    signup: 'Registrieren',
+    logout: 'Abmelden',
+    email: 'E-Mail',
+    password: 'Passwort',
+    fullName: 'Vollständiger Name',
+    forgotPassword: 'Passwort vergessen?',
+    dontHaveAccount: 'Noch kein Konto?',
+    alreadyHaveAccount: 'Bereits ein Konto?',
+    welcomeBack: 'Willkommen zurück',
+    createAccount: 'Konto erstellen',
+    continueWithGoogle: 'Mit Google fortfahren',
+    orContinueWith: 'oder mit E-Mail fortfahren',
+    gdprNotice: 'Mit der Anmeldung akzeptieren Sie unsere Datenschutzrichtlinie und Nutzungsbedingungen. Ihre Daten sind gemäß DSGVO geschützt.',
+    
+    dashboard: 'Dashboard',
+    leads: 'Interessenten',
+    analytics: 'Analytik',
+    campaigns: 'Kampagnen',
+    settings: 'Einstellungen',
+    visitors: 'Besucher',
+    contracts: 'Verträge',
+    
+    totalLeads: 'Interessenten gesamt',
+    conversionRate: 'Konversionsrate',
+    activeCampaigns: 'Aktive Kampagnen',
+    revenue: 'Umsatz',
+    performanceTrends: 'Leistungstrends',
+    recentActivity: 'Letzte Aktivitäten',
+    leadSources: 'Quellen der Interessenten',
+    
+    addLead: 'Interessent hinzufügen',
+    leadName: 'Name',
+    leadEmail: 'E-Mail',
+    leadPhone: 'Telefon',
+    leadStatus: 'Status',
+    leadSource: 'Quelle',
+    leadNotes: 'Notizen',
+    newLead: 'Neu',
+    contacted: 'Kontaktiert',
+    qualified: 'Qualifiziert',
+    converted: 'Konvertiert',
+    rejected: 'Abgelehnt',
+    
+    addCampaign: 'Kampagne hinzufügen',
+    campaignName: 'Kampagnenname',
+    campaignDescription: 'Beschreibung',
+    campaignStatus: 'Status',
+    campaignBudget: 'Budget',
+    campaignChannels: 'Kanäle',
+    startDate: 'Startdatum',
+    endDate: 'Enddatum',
+    active: 'Aktiv',
+    paused: 'Pausiert',
+    completed: 'Abgeschlossen',
+    draft: 'Entwurf',
+    
+    profileSettings: 'Profileinstellungen',
+    appearance: 'Erscheinungsbild',
+    language: 'Sprache',
+    darkMode: 'Dunkler Modus',
+    lightMode: 'Heller Modus',
+    notifications: 'Benachrichtigungen',
+    
+    saveSuccess: 'Erfolgreich gespeichert',
+    saveError: 'Fehler beim Speichern',
+    deleteSuccess: 'Erfolgreich gelöscht',
+    deleteError: 'Fehler beim Löschen',
+    loginError: 'Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.',
+    signupSuccess: 'Konto erfolgreich erstellt!',
+
+    visitorsDescription: 'Schulbesucher und Einschreibungsanträge verwalten',
+    addVisitor: 'Besucher hinzufügen',
+    editVisitor: 'Besucher bearbeiten',
+    totalVisitors: 'Besucher gesamt',
+    visitedCount: 'Besuche abgeschlossen',
+    enrolledCount: 'Eingeschrieben',
+    conversionRateVisit: 'Konversionsrate',
+    visitToEnrollment: 'Besuch zur Einschreibung',
+    
+    child: 'Kind',
+    parents: 'Eltern',
+    visit: 'Besuch',
+    financial: 'Finanzen',
+    
+    childInfo: 'Kindesinformationen',
+    firstName: 'Vorname',
+    lastName: 'Nachname',
+    dateOfBirth: 'Geburtsdatum',
+    citizenship: 'Staatsangehörigkeit',
+    address: 'Adresse',
+    addressPlaceholder: 'Stadt, Straße und Hausnummer, PLZ',
+    childName: 'Name des Kindes',
+    
+    parentInfo: 'Eltern-/Vormund-Informationen',
+    mother: 'Mutter',
+    father: 'Vater',
+    guardian: 'Vormund (falls zutreffend)',
+    phone: 'Telefon',
+    profession: 'Beruf',
+    
+    visitDetails: 'Besuchsdetails',
+    visitType: 'Besuchsart',
+    inPerson: 'Persönlich',
+    online: 'Online',
+    visitDate: 'Besuchsdatum',
+    visitorStatus: 'Status',
+    scheduled: 'Geplant',
+    visited: 'Besucht',
+    enrolledStatus: 'Eingeschrieben',
+    pending: 'Ausstehend',
+    referralSource: 'Wie haben Sie uns gefunden?',
+    referralSourcePlaceholder: 'Website, Freund, Soziale Medien...',
+    visitTime: 'Besuchszeit',
+    emailNotSent: 'E-Mail nicht gesendet',
+    allEmailStatuses: 'Alle E-Mail-Status',
+    visitNotes: 'Besuchsnotizen',
+    
+    enrollmentAssessment: 'Einschreibungsbewertung',
+    enrollmentDecision: 'Entscheidung',
+    selectDecision: 'Entscheidung auswählen',
+    approved: 'Genehmigt',
+    conditional: 'Bedingt',
+    decisionRejected: 'Abgelehnt',
+    pendingReview: 'Überprüfung ausstehend',
+    decisionNotes: 'Entscheidungsnotizen',
+    decisionNotesPlaceholder: 'Notizen zur Einschreibungsentscheidung...',
+    
+    financialDetails: 'Finanzdetails',
+    targetGrade: 'Zielklasse',
+    selectGrade: 'Klasse auswählen',
+    grade: 'Klasse',
+    schoolYear: 'Schuljahr',
+    enrollmentSemester: 'Einschreibungszeitraum',
+    semester1Full: 'Ganzes Jahr (1. Semester)',
+    semester2Only: 'Nur zweites Semester',
+    residentType: 'Aufenthaltsstatus',
+    domestic: 'Inländisch',
+    foreign: 'Ausländisch',
+    paymentType: 'Zahlungsart',
+    fullPayment: 'Einmalzahlung',
+    installments: 'Ratenzahlung',
+    monthsToPay: 'Zahlungsmonate',
+    
+    discountsWaivers: 'Rabatte & Befreiungen',
+    siblingDiscount: 'Geschwisterrabatt',
+    noDiscount: 'Kein Rabatt',
+    secondChild: '2. Kind',
+    thirdChild: '3. Kind',
+    scholarshipPercent: 'Stipendium %',
+    scholarshipType: 'Stipendienart',
+    scholarshipTypePlaceholder: 'z.B. Schulratsbeschluss, Leistung...',
+    registrationFeeWaived: 'Anmeldegebühr erlassen',
+    usesExtendedStay: 'Nutzt Nachmittagsbetreuung',
+    
+    feeSummary: 'Kostenübersicht',
+    registrationFee: 'Anmeldegebühr',
+    deposit: 'Kaution',
+    baseTuition: 'Grundschulgeld',
+    siblingDiscountAmount: 'Geschwisterrabatt',
+    scholarshipDiscountAmount: 'Stipendienrabatt',
+    extendedStay: 'Nachmittagsbetreuung',
+    proRated: 'Anteilig',
+    months: 'Monate',
+    totalAmountDue: 'Gesamtbetrag fällig',
+    
+    pricingManagement: 'Preisverwaltung',
+    manageFees: 'Schulgebühren und Rabatte verwalten',
+    saveChanges: 'Änderungen speichern',
+    generalSettings: 'Allgemeine Einstellungen',
+    activePricing: 'Aktive Preise',
+    activePricingDesc: 'Als aktive Preise für neue Einschreibungen festlegen',
+    registrationDeposit: 'Anmeldung & Kaution',
+    registrationDepositDesc: 'Einmalige Gebühren bei der Einschreibung',
+    registrationFeeDomestic: 'Anmeldegebühr (Inländisch)',
+    registrationFeeForeign: 'Anmeldegebühr (Ausländisch)',
+    depositAmount: 'Kautionsbetrag',
+    tuitionFees: 'Schulgebühren',
+    tuitionFeesDesc: 'Jährliches Schulgeld nach Klassenstufe und Aufenthaltsstatus',
+    grades1to4: 'Klassen 1-4',
+    grades5to9: 'Klassen 5-9',
+    domesticTuition: 'Schulgeld (Inländisch)',
+    foreignTuition: 'Schulgeld (Ausländisch)',
+    additionalFeesDiscounts: 'Zusätzliche Gebühren & Rabatte',
+    additionalFeesDesc: 'Optionale Gebühren und Rabattprozentsätze',
+    extendedStayFee: 'Nachmittagsbetreuungsgebühr',
+    siblingDiscount2nd: 'Geschwisterrabatt (2. Kind)',
+    siblingDiscount3rd: 'Geschwisterrabatt (3. Kind)',
+    accessDenied: 'Zugriff verweigert',
+    adminOnlyAccess: 'Diese Seite ist nur für Administratoren zugänglich.',
+    
+    upcomingVisits: 'Bevorstehende Besuche',
+    viewAll: 'Alle anzeigen',
+    noUpcomingVisits: 'Keine geplanten Besuche in den nächsten 7 Tagen',
+    scheduleVisit: 'Besuch planen',
+    today: 'Heute',
+    tomorrow: 'Morgen',
+    conversionTrends: 'Konversionstrends der Besucher',
+    exportCSV: 'CSV exportieren',
+    exportExcel: 'Excel exportieren',
+
+    // Contracts
+    generateContract: 'Vertrag generieren',
+    contractsList: 'Verträge',
+    contractsDescription: 'Einschreibungsverträge verwalten',
+    contractNumber: 'Vertragsnummer',
+    contractDate: 'Vertragsdatum',
+    contractStatus: 'Status',
+    contractLanguage: 'Vertragssprache',
+    contractDraft: 'Entwurf',
+    contractGenerated: 'Generiert',
+    contractSent: 'Gesendet',
+    contractSigned: 'Unterzeichnet',
+    downloadPDF: 'PDF herunterladen',
+    downloadDOCX: 'DOCX herunterladen',
+    sendContract: 'Vertrag senden',
+    markSigned: 'Als unterzeichnet markieren',
+    verifyInformation: 'Informationen überprüfen',
+    confirmFinancials: 'Finanzen bestätigen',
+    setDates: 'Termine festlegen',
+    previewGenerate: 'Vorschau & Generieren',
+    contractGenerateSuccess: 'Vertrag erfolgreich generiert',
+    contractSendSuccess: 'Vertrag erfolgreich gesendet',
+    contractSignedSuccess: 'Vertrag als unterzeichnet markiert',
+    noContracts: 'Noch keine Verträge',
+    childMustBeEnrolled: 'Kind muss eingeschrieben sein, bevor ein Vertrag erstellt werden kann',
+    contractAlreadyExists: 'Vertrag existiert bereits für dieses Schuljahr',
+    parentInfoMissing: 'Elterninformationen fehlen',
+    firstPaymentDate: 'Datum der ersten Zahlung',
+    signatureDate: 'Unterschriftsdatum',
+    enrollmentAgreement: 'Einschreibungsvertrag',
+    annualTuition: 'Jährliches Schulgeld',
+    monthlyInstallment: 'Monatliche Rate',
+    totalContractsLabel: 'Verträge gesamt',
+    signedContractsLabel: 'Unterzeichnet',
+    pendingContractsLabel: 'Ausstehend',
   },
 };
 
@@ -698,5 +1041,6 @@ export function getAvailableLanguages(): { code: Language; name: string }[] {
   return [
     { code: 'EN', name: 'English' },
     { code: 'BS', name: 'Bosanski' },
+    { code: 'DE', name: 'Deutsch' },
   ];
 }
