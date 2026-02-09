@@ -17,6 +17,7 @@ import Campaigns from "./pages/Campaigns";
 import Settings from "./pages/Settings";
 import Visitors from "./pages/Visitors";
 import PricingManagement from "./pages/PricingManagement";
+import Contracts from "./pages/Contracts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -130,6 +131,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <PricingManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contracts"
+        element={
+          <ProtectedRoute>
+            <Contracts />
           </ProtectedRoute>
         }
       />

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Language, t as translate } from '@/lib/translations';
 
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
@@ -14,7 +15,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const savedLang = localStorage.getItem('idss_language') as Language;
-    if (savedLang && (savedLang === 'EN' || savedLang === 'BS')) {
+    if (savedLang && (savedLang === 'EN' || savedLang === 'BS' || savedLang === 'DE')) {
       setLanguageState(savedLang);
     }
   }, []);

@@ -98,6 +98,107 @@ export type Database = {
         }
         Relationships: []
       }
+      contract_templates: {
+        Row: {
+          academic_year: string
+          created_at: string
+          field_mapping: Json | null
+          id: string
+          is_active: boolean | null
+          language: string
+          name: string
+          template_content: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          academic_year: string
+          created_at?: string
+          field_mapping?: Json | null
+          id?: string
+          is_active?: boolean | null
+          language?: string
+          name: string
+          template_content?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          academic_year?: string
+          created_at?: string
+          field_mapping?: Json | null
+          id?: string
+          is_active?: boolean | null
+          language?: string
+          name?: string
+          template_content?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      contracts: {
+        Row: {
+          academic_year: string
+          contract_data: Json
+          contract_number: string
+          created_at: string
+          docx_url: string | null
+          grade: number
+          id: string
+          language: string
+          pdf_url: string | null
+          sent_at: string | null
+          signed_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          visitor_id: string
+        }
+        Insert: {
+          academic_year?: string
+          contract_data?: Json
+          contract_number: string
+          created_at?: string
+          docx_url?: string | null
+          grade: number
+          id?: string
+          language?: string
+          pdf_url?: string | null
+          sent_at?: string | null
+          signed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          visitor_id: string
+        }
+        Update: {
+          academic_year?: string
+          contract_data?: Json
+          contract_number?: string
+          created_at?: string
+          docx_url?: string | null
+          grade?: number
+          id?: string
+          language?: string
+          pdf_url?: string | null
+          sent_at?: string | null
+          signed_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          visitor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_visitor_id_fkey"
+            columns: ["visitor_id"]
+            isOneToOne: false
+            referencedRelation: "visitors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_templates: {
         Row: {
           body_html: string
