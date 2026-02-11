@@ -50,8 +50,8 @@ export function VisitDetailsSection({ formData, onChange, t }: VisitDetailsSecti
           <Input
             id="visit_time"
             type="time"
-            value={formData.visit_scheduled_at ? formData.visit_scheduled_at.substring(0, 5) : ''}
-            onChange={(e) => onChange({ visit_scheduled_at: e.target.value ? `${e.target.value}:00` : '' })}
+            value={formData.visit_scheduled_at || ''}
+            onChange={(e) => onChange({ visit_scheduled_at: e.target.value })}
           />
         </div>
         <div>
