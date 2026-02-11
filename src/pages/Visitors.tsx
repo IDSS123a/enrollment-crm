@@ -54,6 +54,22 @@ const statusColors: Record<VisitorStatus, string> = {
   pending: 'bg-muted text-muted-foreground border-muted',
 };
 
+const isISODate = (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value);
+const isHHmm = (value: string) => /^\d{2}:\d{2}$/.test(value);
+
+const toISODateOrNull = (value: string | null | undefined) => {
+  const v = (value || '').trim();
+  if (!v) return null;
+  return isISODate(v) ? v : null;
+};
+
+const toVisitScheduledAtISOOrNull = (visitDate: string | null, visitTimeHHmm: string | null) => {
+  if (!visitDate || !visitTimeHHmm) return null;
+  if (!isISODate(visitDate) || !isHHmm(visitTimeHHmm)) return null;
+  // Interpret date+time as user's local time, store as ISO (UTC) for timestamptz.
+  return new Date(`${visitDate}T${visitTimeHHmm}:00`).toISOString();
+};
+
 export default function Visitors() {
   const { user } = useAuth();
   const { t } = useLanguage();
@@ -115,13 +131,52 @@ export default function Visitors() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    if (!user) return;
+
+    const childDob = (formData.child_date_of_birth || '').trim();
+    if (!childDob || !isISODate(childDob)) {
+      setActiveTab('child');
+      toast({
+        title: 'Error',
+        description: `${t('dateOfBirth')}: ${t('requiredField')}`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const visitDate = toISODateOrNull(formData.visit_date);
+    const visitTimeHHmm = (formData.visit_scheduled_at || '').trim() || null;
+
+    if (visitTimeHHmm && !visitDate) {
+      setActiveTab('visit');
+      toast({
+        title: 'Error',
+        description: `${t('visitDate')}: ${t('requiredField')} (${t('visitTime')})`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (visitTimeHHmm && !isHHmm(visitTimeHHmm)) {
+      setActiveTab('visit');
+      toast({
+        title: 'Error',
+        description: `${t('visitTime')}: ${t('invalidValue')}`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const visitScheduledAtISO = toVisitScheduledAtISOOrNull(visitDate, visitTimeHHmm);
+
     // Calculate fees
     const fees = calculateFees(formData);
-    
+
     const visitorData = {
       ...formData,
-      user_id: user?.id,
+      user_id: user.id,
+      child_date_of_birth: childDob,
       registration_fee: fees.registrationFee,
       deposit_amount: fees.depositAmount,
       tuition_fee: fees.baseTuition,
@@ -142,8 +197,8 @@ export default function Visitors() {
       guardian_phone: formData.guardian_phone || null,
       guardian_email: formData.guardian_email || null,
       referral_source: formData.referral_source || null,
-      visit_date: formData.visit_date || null,
-      visit_scheduled_at: formData.visit_scheduled_at || null,
+      visit_date: visitDate,
+      visit_scheduled_at: visitScheduledAtISO,
       visit_notes: formData.visit_notes || null,
       enrollment_decision_notes: formData.enrollment_decision_notes || null,
       scholarship_type: formData.scholarship_type || null,
@@ -315,6 +370,15 @@ export default function Visitors() {
 
   const handleEdit = (visitor: Visitor) => {
     setEditingVisitor(visitor);
+
+    const derivedVisitDate = visitor.visit_date
+      ? visitor.visit_date
+      : (visitor.visit_scheduled_at ? format(new Date(visitor.visit_scheduled_at), 'yyyy-MM-dd') : '');
+
+    const derivedVisitTime = visitor.visit_scheduled_at
+      ? format(new Date(visitor.visit_scheduled_at), 'HH:mm')
+      : '';
+
     setFormData({
       child_first_name: visitor.child_first_name,
       child_last_name: visitor.child_last_name,
@@ -335,8 +399,9 @@ export default function Visitors() {
       guardian_email: visitor.guardian_email || '',
       referral_source: visitor.referral_source || '',
       visit_type: visitor.visit_type,
-      visit_date: visitor.visit_date || '',
-      visit_scheduled_at: visitor.visit_scheduled_at || '',
+      visit_date: derivedVisitDate,
+      // form state keeps HH:mm; we convert to ISO on submit
+      visit_scheduled_at: derivedVisitTime,
       visit_notes: visitor.visit_notes || '',
       status: visitor.status,
       enrollment_decision: visitor.enrollment_decision,

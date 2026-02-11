@@ -89,6 +89,8 @@ interface TranslationStrings {
   // Messages
   saveSuccess: string;
   saveError: string;
+  requiredField: string;
+  invalidValue: string;
   deleteSuccess: string;
   deleteError: string;
   loginError: string;
@@ -354,6 +356,8 @@ const translations: Record<Language, TranslationStrings> = {
     
     saveSuccess: 'Saved successfully',
     saveError: 'Failed to save',
+    requiredField: 'This field is required',
+    invalidValue: 'Invalid value',
     deleteSuccess: 'Deleted successfully',
     deleteError: 'Failed to delete',
     loginError: 'Login failed. Please check your credentials.',
@@ -607,6 +611,8 @@ const translations: Record<Language, TranslationStrings> = {
     
     saveSuccess: 'Uspješno sačuvano',
     saveError: 'Greška pri čuvanju',
+    requiredField: 'Obavezno polje',
+    invalidValue: 'Neispravna vrijednost',
     deleteSuccess: 'Uspješno obrisano',
     deleteError: 'Greška pri brisanju',
     loginError: 'Prijava nije uspjela. Provjerite podatke.',
@@ -860,6 +866,8 @@ const translations: Record<Language, TranslationStrings> = {
     
     saveSuccess: 'Erfolgreich gespeichert',
     saveError: 'Fehler beim Speichern',
+    requiredField: 'Pflichtfeld',
+    invalidValue: 'Ungültiger Wert',
     deleteSuccess: 'Erfolgreich gelöscht',
     deleteError: 'Fehler beim Löschen',
     loginError: 'Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.',
