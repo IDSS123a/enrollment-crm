@@ -460,7 +460,7 @@ export default function Contracts() {
                     <Label>{t('childName')}</Label>
                     <Select value={selectedVisitorId} onValueChange={setSelectedVisitorId}>
                       <SelectTrigger>
-                        <SelectValue placeholder={t('selectGrade')} />
+                        <SelectValue placeholder={t('childName')} />
                       </SelectTrigger>
                       <SelectContent>
                         {visitors.map(v => (
