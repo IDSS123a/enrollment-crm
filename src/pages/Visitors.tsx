@@ -45,6 +45,7 @@ import { format } from 'date-fns';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { TablePagination, paginateArray } from '@/components/TablePagination';
 
 const statusColors: Record<VisitorStatus, string> = {
   scheduled: 'bg-info/10 text-info border-info/20',
@@ -97,6 +98,8 @@ export default function Visitors() {
   const [isAfterVisitPreviewOpen, setIsAfterVisitPreviewOpen] = useState(false);
   const [afterVisitTemplate, setAfterVisitTemplate] = useState<{ subject: string; body_html: string } | null>(null);
   const [loadingTemplate, setLoadingTemplate] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     if (user) {
@@ -911,7 +914,7 @@ export default function Visitors() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredVisitors.map((visitor) => (
+                  {paginateArray(filteredVisitors, currentPage, pageSize).map((visitor) => (
                     <TableRow 
                       key={visitor.id} 
                       className={`animate-fade-in ${selectedVisitors.has(visitor.id) ? 'bg-muted/50' : ''}`}
@@ -971,6 +974,14 @@ export default function Visitors() {
                   ))}
                 </TableBody>
               </Table>
+              <TablePagination
+                currentPage={currentPage}
+                totalItems={filteredVisitors.length}
+                pageSize={pageSize}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setPageSize}
+                t={t}
+              />
             </div>
           )}
         </MaterialCard>

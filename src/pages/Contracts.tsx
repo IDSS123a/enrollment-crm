@@ -24,12 +24,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
   FileText, Search, Download, Send, CheckCircle2, Loader2,
-  Plus, Eye, PenLine, FileDown,
+  Plus, Eye, PenLine, FileDown, Printer,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { numberToText, gradeNames, toRomanNumeral, formatDateByLocale, formatCurrencyByLocale, type NumberTextLanguage } from '@/lib/numberToText';
 import { generateContractHTML, type ContractTemplateData } from '@/lib/contractTemplates';
 import { exportContractPDF, exportContractDOCX } from '@/lib/contractExport';
+import { TablePagination, paginateArray } from '@/components/TablePagination';
 import type { Visitor } from '@/types/visitor';
 
 interface Contract {
@@ -74,6 +75,9 @@ export default function Contracts() {
   const [firstPaymentDate, setFirstPaymentDate] = useState('2025-09-05');
   const [generating, setGenerating] = useState(false);
   const [previewContract, setPreviewContract] = useState<Contract | null>(null);
+  const [htmlPreviewContract, setHtmlPreviewContract] = useState<Contract | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     if (user) {
@@ -264,6 +268,27 @@ export default function Contracts() {
     exportContractPDF(html, filename);
   };
 
+  const handleShowHTMLPreview = (contract: Contract) => {
+    setHtmlPreviewContract(contract);
+  };
+
+  const getContractHTMLContent = (contract: Contract) => {
+    const tplData = buildTemplateData(contract);
+    return generateContractHTML(tplData, contract.language);
+  };
+
+  const handlePrintPreview = () => {
+    if (!htmlPreviewContract) return;
+    const html = getContractHTMLContent(htmlPreviewContract);
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+    }
+  };
+
   const handleDownloadDOCX = async (contract: Contract) => {
     const tplData = buildTemplateData(contract);
     const filename = `${contract.contract_number}-${contract.language.toUpperCase()}.docx`;
@@ -361,7 +386,7 @@ export default function Contracts() {
                       {t('noContracts')}
                     </TableCell>
                   </TableRow>
-                ) : filteredContracts.map((contract) => {
+                ) : paginateArray(filteredContracts, currentPage, pageSize).map((contract) => {
                   const data = contract.contract_data as Record<string, any>;
                   return (
                     <TableRow key={contract.id}>
@@ -380,8 +405,8 @@ export default function Contracts() {
                         <div className="flex gap-1">
                           <Button
                             variant="ghost" size="icon"
-                            onClick={() => setPreviewContract(contract)}
-                            title={t('edit')}
+                            onClick={() => handleShowHTMLPreview(contract)}
+                            title={t('fullContractPreview')}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -424,8 +449,53 @@ export default function Contracts() {
                 })}
               </TableBody>
             </Table>
+            <TablePagination
+              currentPage={currentPage}
+              totalItems={filteredContracts.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setPageSize}
+              t={t}
+            />
           </CardContent>
         </Card>
+
+        {/* Full HTML Contract Preview Dialog */}
+        <Dialog open={!!htmlPreviewContract} onOpenChange={() => setHtmlPreviewContract(null)}>
+          <DialogContent className="max-w-4xl max-h-[90vh]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center justify-between">
+                <span>{t('fullContractPreview')} — {htmlPreviewContract?.contract_number}</span>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={handlePrintPreview} className="gap-1">
+                    <Printer className="h-4 w-4" />
+                    {t('printContract')}
+                  </Button>
+                  {htmlPreviewContract && (
+                    <>
+                      <Button variant="outline" size="sm" onClick={() => handleDownloadPDF(htmlPreviewContract)} className="gap-1">
+                        <FileDown className="h-4 w-4" />
+                        PDF
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleDownloadDOCX(htmlPreviewContract)} className="gap-1">
+                        <Download className="h-4 w-4" />
+                        DOCX
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </DialogTitle>
+            </DialogHeader>
+            <ScrollArea className="max-h-[75vh]">
+              {htmlPreviewContract && (
+                <div
+                  className="bg-white text-black p-4 rounded border"
+                  dangerouslySetInnerHTML={{ __html: getContractHTMLContent(htmlPreviewContract) }}
+                />
+              )}
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
 
         {/* Contract Preview Dialog */}
         <Dialog open={!!previewContract} onOpenChange={() => setPreviewContract(null)}>

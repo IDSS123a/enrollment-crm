@@ -272,6 +272,19 @@ interface TranslationStrings {
   totalContractsLabel: string;
   signedContractsLabel: string;
   pendingContractsLabel: string;
+
+  // Pagination
+  page: string;
+  of: string;
+  rowsPerPage: string;
+  showing: string;
+  entries: string;
+  previous: string;
+  next: string;
+
+  // Contract preview
+  fullContractPreview: string;
+  printContract: string;
 }
 
 const translations: Record<Language, TranslationStrings> = {
@@ -528,6 +541,15 @@ const translations: Record<Language, TranslationStrings> = {
     totalContractsLabel: 'Total Contracts',
     signedContractsLabel: 'Signed',
     pendingContractsLabel: 'Pending',
+    page: 'Page',
+    of: 'of',
+    rowsPerPage: 'Rows per page',
+    showing: 'Showing',
+    entries: 'entries',
+    previous: 'Previous',
+    next: 'Next',
+    fullContractPreview: 'Full Contract Preview',
+    printContract: 'Print Contract',
   },
 
   BS: {
@@ -783,6 +805,15 @@ const translations: Record<Language, TranslationStrings> = {
     totalContractsLabel: 'Ukupno ugovora',
     signedContractsLabel: 'Potpisani',
     pendingContractsLabel: 'Na čekanju',
+    page: 'Stranica',
+    of: 'od',
+    rowsPerPage: 'Redova po stranici',
+    showing: 'Prikazano',
+    entries: 'zapisa',
+    previous: 'Prethodna',
+    next: 'Sljedeća',
+    fullContractPreview: 'Puni pregled ugovora',
+    printContract: 'Štampaj ugovor',
   },
 
   DE: {
@@ -1038,6 +1069,15 @@ const translations: Record<Language, TranslationStrings> = {
     totalContractsLabel: 'Verträge gesamt',
     signedContractsLabel: 'Unterzeichnet',
     pendingContractsLabel: 'Ausstehend',
+    page: 'Seite',
+    of: 'von',
+    rowsPerPage: 'Zeilen pro Seite',
+    showing: 'Anzeige',
+    entries: 'Einträge',
+    previous: 'Zurück',
+    next: 'Weiter',
+    fullContractPreview: 'Vollständige Vertragsvorschau',
+    printContract: 'Vertrag drucken',
   },
 };
 
