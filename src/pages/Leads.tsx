@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { TablePagination, paginateArray } from '@/components/TablePagination';
 import { MaterialCard } from '@/components/dashboard/MaterialCard';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -54,6 +55,8 @@ export default function Leads() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -351,7 +354,7 @@ export default function Leads() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredLeads.map((lead) => (
+                  {paginateArray(filteredLeads, currentPage, pageSize).map((lead) => (
                     <TableRow key={lead.id} className="animate-fade-in">
                       <TableCell className="font-medium">{lead.name}</TableCell>
                       <TableCell>
@@ -399,6 +402,14 @@ export default function Leads() {
                   ))}
                 </TableBody>
               </Table>
+              <TablePagination
+                currentPage={currentPage}
+                totalItems={filteredLeads.length}
+                pageSize={pageSize}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setPageSize}
+                t={t}
+              />
             </div>
           )}
         </MaterialCard>
