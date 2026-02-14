@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { TablePagination, paginateArray } from '@/components/TablePagination';
 import { MaterialCard } from '@/components/dashboard/MaterialCard';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -42,6 +43,8 @@ export default function Campaigns() {
   const { toast } = useToast();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
   const [formData, setFormData] = useState({
@@ -312,111 +315,117 @@ export default function Campaigns() {
             </div>
           </MaterialCard>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {campaigns.map((campaign) => {
-              const progress = campaign.budget > 0 ? (Number(campaign.spent) / Number(campaign.budget)) * 100 : 0;
-              
-              return (
-                <MaterialCard key={campaign.id} className="flex flex-col">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground line-clamp-1">{campaign.name}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                        {campaign.description || 'No description'}
-                      </p>
-                    </div>
-                    <Badge variant="outline" className={statusColors[campaign.status]}>
-                      {t(campaign.status as any)}
-                    </Badge>
-                  </div>
-
-                  {/* Budget Progress */}
-                  <div className="mb-4">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-muted-foreground">Budget Used</span>
-                      <span className="font-medium">
-                        ${Number(campaign.spent).toLocaleString()} / ${Number(campaign.budget).toLocaleString()}
-                      </span>
-                    </div>
-                    <Progress value={progress} className="h-2" />
-                  </div>
-
-                  {/* Metrics */}
-                  <div className="grid grid-cols-3 gap-4 py-4 border-t border-border">
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
-                        <Users className="h-3 w-3" />
-                        <span className="text-xs">Leads</span>
+          <>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {paginateArray(campaigns, currentPage, pageSize).map((campaign) => {
+                const progress = campaign.budget > 0 ? (Number(campaign.spent) / Number(campaign.budget)) * 100 : 0;
+                
+                return (
+                  <MaterialCard key={campaign.id} className="flex flex-col">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-foreground line-clamp-1">{campaign.name}</h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                          {campaign.description || 'No description'}
+                        </p>
                       </div>
-                      <p className="font-semibold">{campaign.leads_count}</p>
+                      <Badge variant="outline" className={statusColors[campaign.status]}>
+                        {t(campaign.status as any)}
+                      </Badge>
                     </div>
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
-                        <Target className="h-3 w-3" />
-                        <span className="text-xs">Conv.</span>
-                      </div>
-                      <p className="font-semibold">{campaign.conversions}</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
-                        <DollarSign className="h-3 w-3" />
-                        <span className="text-xs">Revenue</span>
-                      </div>
-                      <p className="font-semibold">${Number(campaign.revenue).toLocaleString()}</p>
-                    </div>
-                  </div>
 
-                  {/* Dates */}
-                  {(campaign.start_date || campaign.end_date) && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground py-3 border-t border-border">
-                      <Calendar className="h-4 w-4" />
-                      {campaign.start_date && format(new Date(campaign.start_date), 'MMM d')}
-                      {campaign.start_date && campaign.end_date && ' - '}
-                      {campaign.end_date && format(new Date(campaign.end_date), 'MMM d, yyyy')}
+                    <div className="mb-4">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">Budget Used</span>
+                        <span className="font-medium">
+                          ${Number(campaign.spent).toLocaleString()} / ${Number(campaign.budget).toLocaleString()}
+                        </span>
+                      </div>
+                      <Progress value={progress} className="h-2" />
                     </div>
-                  )}
 
-                  {/* Actions */}
-                  <div className="flex gap-2 mt-auto pt-4 border-t border-border">
-                    {campaign.status !== 'completed' && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => toggleStatus(campaign)}
-                      >
-                        {campaign.status === 'active' ? (
-                          <>
-                            <Pause className="h-4 w-4 mr-1" />
-                            Pause
-                          </>
-                        ) : (
-                          <>
-                            <Play className="h-4 w-4 mr-1" />
-                            Start
-                          </>
-                        )}
-                      </Button>
+                    <div className="grid grid-cols-3 gap-4 py-4 border-t border-border">
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
+                          <Users className="h-3 w-3" />
+                          <span className="text-xs">Leads</span>
+                        </div>
+                        <p className="font-semibold">{campaign.leads_count}</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
+                          <Target className="h-3 w-3" />
+                          <span className="text-xs">Conv.</span>
+                        </div>
+                        <p className="font-semibold">{campaign.conversions}</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
+                          <DollarSign className="h-3 w-3" />
+                          <span className="text-xs">Revenue</span>
+                        </div>
+                        <p className="font-semibold">${Number(campaign.revenue).toLocaleString()}</p>
+                      </div>
+                    </div>
+
+                    {(campaign.start_date || campaign.end_date) && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground py-3 border-t border-border">
+                        <Calendar className="h-4 w-4" />
+                        {campaign.start_date && format(new Date(campaign.start_date), 'MMM d')}
+                        {campaign.start_date && campaign.end_date && ' - '}
+                        {campaign.end_date && format(new Date(campaign.end_date), 'MMM d, yyyy')}
+                      </div>
                     )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(campaign)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(campaign.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                </MaterialCard>
-              );
-            })}
-          </div>
+
+                    <div className="flex gap-2 mt-auto pt-4 border-t border-border">
+                      {campaign.status !== 'completed' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => toggleStatus(campaign)}
+                        >
+                          {campaign.status === 'active' ? (
+                            <>
+                              <Pause className="h-4 w-4 mr-1" />
+                              Pause
+                            </>
+                          ) : (
+                            <>
+                              <Play className="h-4 w-4 mr-1" />
+                              Start
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(campaign)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(campaign.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </MaterialCard>
+                );
+              })}
+            </div>
+            <TablePagination
+              currentPage={currentPage}
+              totalItems={campaigns.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setPageSize}
+              t={t}
+            />
+          </>
         )}
       </div>
     </AppLayout>

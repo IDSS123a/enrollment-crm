@@ -51,6 +51,16 @@ interface Contract {
   updated_at: string;
 }
 
+/** Extract the next sequential number from existing contract numbers like IDSS-2026-003 */
+function nextContractSeq(contracts: Contract[]): string {
+  let max = 0;
+  for (const c of contracts) {
+    const m = c.contract_number.match(/IDSS-\d{4}-(\d+)/);
+    if (m) max = Math.max(max, parseInt(m[1], 10));
+  }
+  return (max + 1).toString().padStart(3, '0');
+}
+
 const statusColors: Record<string, string> = {
   draft: 'bg-muted text-muted-foreground border-muted',
   generated: 'bg-info/10 text-info border-info/20',
@@ -74,7 +84,6 @@ export default function Contracts() {
   const [contractDate, setContractDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [firstPaymentDate, setFirstPaymentDate] = useState('2025-09-05');
   const [generating, setGenerating] = useState(false);
-  const [previewContract, setPreviewContract] = useState<Contract | null>(null);
   const [htmlPreviewContract, setHtmlPreviewContract] = useState<Contract | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -108,7 +117,7 @@ export default function Contracts() {
 
   const generateContractNumber = () => {
     const year = new Date().getFullYear();
-    const seq = (contracts.length + 1).toString().padStart(3, '0');
+    const seq = nextContractSeq(contracts);
     return `IDSS-${year}-${seq}`;
   };
 
@@ -497,17 +506,7 @@ export default function Contracts() {
           </DialogContent>
         </Dialog>
 
-        {/* Contract Preview Dialog */}
-        <Dialog open={!!previewContract} onOpenChange={() => setPreviewContract(null)}>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{t('enrollmentAgreement')} - {previewContract?.contract_number}</DialogTitle>
-            </DialogHeader>
-            {previewContract && (
-              <ContractPreviewContent contract={previewContract} t={t} />
-            )}
-          </DialogContent>
-        </Dialog>
+        {/* Legacy preview removed — replaced by full HTML preview above */}
 
         {/* Generation Wizard */}
         <Dialog open={isWizardOpen} onOpenChange={setIsWizardOpen}>
@@ -655,64 +654,4 @@ export default function Contracts() {
   );
 }
 
-// Contract Preview Sub-component
-function ContractPreviewContent({ contract, t }: { contract: Contract; t: (key: any) => string }) {
-  const data = contract.contract_data as Record<string, any>;
-
-  return (
-    <div className="space-y-4 text-sm">
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <p className="text-muted-foreground">{t('contractNumber')}</p>
-          <p className="font-mono font-semibold">{contract.contract_number}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground">{t('contractDate')}</p>
-          <p>{data?.contract_date}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground">{t('childName')}</p>
-          <p className="font-medium">{data?.child_full_name}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground">{t('grade')}</p>
-          <p>{data?.grade_number} ({data?.grade_text})</p>
-        </div>
-      </div>
-
-      <Separator />
-
-      <div>
-        <p className="font-medium mb-2">{t('parentInfo')}</p>
-        <p>{data?.parent1_full_name}</p>
-        {data?.parent2_full_name && <p>{data.parent2_full_name}</p>}
-        <p className="text-muted-foreground">{data?.address}</p>
-      </div>
-
-      <Separator />
-
-      <div>
-        <p className="font-medium mb-2">{t('financialDetails')}</p>
-        <div className="grid grid-cols-2 gap-1">
-          <p className="text-muted-foreground">{t('registrationFee')}:</p>
-          <p>{data?.enrollment_fee_amount} KM ({data?.enrollment_fee_text})</p>
-          <p className="text-muted-foreground">{t('deposit')}:</p>
-          <p>{data?.deposit_amount} KM ({data?.deposit_text})</p>
-          <p className="text-muted-foreground">{t('annualTuition')}:</p>
-          <p>{data?.tuition_annual_amount} KM ({data?.tuition_annual_text})</p>
-          <p className="text-muted-foreground font-semibold">{t('totalAmountDue')}:</p>
-          <p className="font-bold">{data?.total_amount_due} KM</p>
-        </div>
-      </div>
-
-      <Separator />
-
-      <div className="grid grid-cols-2 gap-1">
-        <p className="text-muted-foreground">{t('firstPaymentDate')}:</p>
-        <p>{data?.first_payment_date}</p>
-        <p className="text-muted-foreground">{t('signatureDate')}:</p>
-        <p>{data?.signature_date}</p>
-      </div>
-    </div>
-  );
-}
+// Legacy ContractPreviewContent removed — superseded by full HTML preview modal
