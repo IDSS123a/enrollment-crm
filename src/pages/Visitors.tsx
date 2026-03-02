@@ -22,6 +22,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -98,6 +99,7 @@ export default function Visitors() {
   const [isAfterVisitPreviewOpen, setIsAfterVisitPreviewOpen] = useState(false);
   const [afterVisitTemplate, setAfterVisitTemplate] = useState<{ subject: string; body_html: string } | null>(null);
   const [loadingTemplate, setLoadingTemplate] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -135,7 +137,8 @@ export default function Visitors() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!user) return;
+    if (!user || saving) return;
+    setSaving(true);
 
     const childDob = (formData.child_date_of_birth || '').trim();
     if (!childDob || !isISODate(childDob)) {
@@ -350,6 +353,8 @@ export default function Visitors() {
         description: error.message || t('saveError'),
         variant: 'destructive',
       });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -736,6 +741,7 @@ export default function Visitors() {
                   <DialogTitle>
                     {editingVisitor ? t('editVisitor') : t('addVisitor')}
                   </DialogTitle>
+                  <DialogDescription className="sr-only">Visitor form</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
                   <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
@@ -761,8 +767,8 @@ export default function Visitors() {
                     </ScrollArea>
                   </Tabs>
                   <div className="flex gap-3 pt-4 border-t mt-4">
-                    <Button type="submit" className="flex-1 gradient-primary">
-                      {t('save')}
+                    <Button type="submit" className="flex-1 gradient-primary" disabled={saving}>
+                      {saving ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t('save')}...</> : t('save')}
                     </Button>
                     <Button
                       type="button"
@@ -787,6 +793,7 @@ export default function Visitors() {
                 <Mail className="h-5 w-5" />
                 Send Bulk Email
               </DialogTitle>
+              <DialogDescription className="sr-only">Send bulk email to selected visitors</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <p className="text-sm text-muted-foreground">
@@ -994,6 +1001,7 @@ export default function Visitors() {
                 <Eye className="h-5 w-5" />
                 Preview: After Visit Thank You Email
               </DialogTitle>
+              <DialogDescription className="sr-only">After visit email preview</DialogDescription>
             </DialogHeader>
             
             <div className="space-y-4">

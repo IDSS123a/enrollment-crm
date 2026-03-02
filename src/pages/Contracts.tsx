@@ -12,7 +12,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -115,10 +115,22 @@ export default function Contracts() {
 
   const selectedVisitor = visitors.find(v => v.id === selectedVisitorId);
 
-  const generateContractNumber = () => {
+  const generateContractNumber = async () => {
+    // Query DB for the actual max contract number to avoid duplicates
     const year = new Date().getFullYear();
-    const seq = nextContractSeq(contracts);
-    return `IDSS-${year}-${seq}`;
+    const { data } = await supabase
+      .from('contracts')
+      .select('contract_number')
+      .like('contract_number', `IDSS-${year}-%`)
+      .order('contract_number', { ascending: false })
+      .limit(1);
+    
+    let max = 0;
+    if (data && data.length > 0) {
+      const m = data[0].contract_number.match(/IDSS-\d{4}-(\d+)/);
+      if (m) max = parseInt(m[1], 10);
+    }
+    return `IDSS-${year}-${(max + 1).toString().padStart(3, '0')}`;
   };
 
   const handleGenerateContract = async () => {
@@ -128,7 +140,7 @@ export default function Contracts() {
     try {
       const lang = contractLanguage as NumberTextLanguage;
       const gradeNum = parseInt(selectedVisitor.target_grade || '1');
-      const contractNum = generateContractNumber();
+      const contractNum = await generateContractNumber();
 
       const contractData = {
         grade_number: toRomanNumeral(gradeNum),
@@ -494,6 +506,7 @@ export default function Contracts() {
                   )}
                 </div>
               </DialogTitle>
+              <DialogDescription className="sr-only">Full contract preview</DialogDescription>
             </DialogHeader>
             <ScrollArea className="max-h-[75vh]">
               {htmlPreviewContract && (
@@ -513,6 +526,7 @@ export default function Contracts() {
           <DialogContent className="max-w-2xl max-h-[85vh]">
             <DialogHeader>
               <DialogTitle>{t('generateContract')}</DialogTitle>
+              <DialogDescription className="sr-only">Contract generation wizard</DialogDescription>
             </DialogHeader>
             <ScrollArea className="max-h-[65vh] pr-4">
               <Tabs value={String(wizardStep)} onValueChange={(v) => setWizardStep(Number(v))}>
