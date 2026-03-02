@@ -22,6 +22,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -222,6 +223,7 @@ export default function Campaigns() {
                 <DialogTitle>
                   {editingCampaign ? t('edit') : t('addCampaign')}
                 </DialogTitle>
+                <DialogDescription className="sr-only">Campaign form</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                 <div>

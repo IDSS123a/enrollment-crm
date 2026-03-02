@@ -20,6 +20,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -221,6 +222,7 @@ export default function Leads() {
                 <DialogTitle>
                   {editingLead ? t('edit') : t('addLead')}
                 </DialogTitle>
+                <DialogDescription className="sr-only">Lead form</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                 <div className="grid grid-cols-2 gap-4">
