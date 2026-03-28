@@ -8,6 +8,7 @@ import {
   updateVisitor,
   deleteVisitor,
   type FetchVisitorsOptions,
+  type CreateVisitorData,
 } from '@/api/visitors';
 import { logActivity } from '@/api/activities';
 import type { Visitor } from '@/types/visitor';
@@ -43,7 +44,7 @@ export function useCreateVisitor() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: (data: Record<string, unknown>) => createVisitor(data, user!.id),
+    mutationFn: (data: CreateVisitorData) => createVisitor(data, user!.id),
     onSuccess: async (newVisitor: Visitor) => {
       queryClient.invalidateQueries({ queryKey: VISITORS_QUERY_KEY });
       await logActivity(
