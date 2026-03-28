@@ -49,6 +49,7 @@ interface TranslationStrings {
   performanceTrends: string;
   recentActivity: string;
   leadSources: string;
+  quickActions: string;
   
   // Leads
   addLead: string;
@@ -333,6 +334,7 @@ const translations: Record<Language, TranslationStrings> = {
     performanceTrends: 'Performance Trends',
     recentActivity: 'Recent Activity',
     leadSources: 'Lead Sources',
+    quickActions: 'Quick Actions',
     
     addLead: 'Add Lead',
     leadName: 'Name',
@@ -597,6 +599,7 @@ const translations: Record<Language, TranslationStrings> = {
     performanceTrends: 'Trendovi performansi',
     recentActivity: 'Nedavne aktivnosti',
     leadSources: 'Izvori kandidata',
+    quickActions: 'Brze akcije',
     
     addLead: 'Dodaj kandidata',
     leadName: 'Ime',
@@ -861,6 +864,7 @@ const translations: Record<Language, TranslationStrings> = {
     performanceTrends: 'Leistungstrends',
     recentActivity: 'Letzte Aktivitäten',
     leadSources: 'Quellen der Interessenten',
+    quickActions: 'Schnellaktionen',
     
     addLead: 'Interessent hinzufügen',
     leadName: 'Name',
