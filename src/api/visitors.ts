@@ -1,11 +1,13 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Visitor } from '@/types/visitor';
+import type { Visitor, VisitorStatus } from '@/types/visitor';
 
 export interface FetchVisitorsOptions {
-  status?: string;
+  status?: VisitorStatus | 'all';
   limit?: number;
   offset?: number;
 }
+
+export type CreateVisitorData = Omit<Visitor, 'id' | 'created_at' | 'updated_at' | 'user_id'>;
 
 /**
  * Fetches all visitors for the school, ordered by creation date descending.
@@ -58,7 +60,7 @@ export async function fetchVisitorById(id: string): Promise<Visitor | null> {
  * @returns The created visitor record
  */
 export async function createVisitor(
-  visitorData: Record<string, unknown>,
+  visitorData: CreateVisitorData,
   userId: string
 ): Promise<Visitor> {
   const { data, error } = await supabase
@@ -80,7 +82,7 @@ export async function createVisitor(
  */
 export async function updateVisitor(
   id: string,
-  visitorData: Record<string, unknown>
+  visitorData: Partial<Visitor>
 ): Promise<Visitor> {
   const { data, error } = await supabase
     .from('visitors')
