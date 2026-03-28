@@ -40,6 +40,13 @@ interface TranslationStrings {
   settings: string;
   visitors: string;
   contracts: string;
+
+  // Campaign details
+  campaignPerformance: string;
+  budgetUsed: string;
+  campaignRevenue: string;
+  campaignStage: string;
+  campaignConversionRate: string;
   
   // Dashboard
   totalLeads: string;
@@ -50,6 +57,15 @@ interface TranslationStrings {
   recentActivity: string;
   leadSources: string;
   quickActions: string;
+
+  // Analytics
+  totalRevenue: string;
+  avgDealSize: string;
+  winRate: string;
+  salesCycleDays: string;
+  analyticsDescription: string;
+  revenueVsTarget: string;
+  conversionFunnel: string;
   
   // Leads
   addLead: string;
@@ -286,6 +302,11 @@ interface TranslationStrings {
   // Contract preview
   fullContractPreview: string;
   printContract: string;
+  campaignsDescription: string;
+  budgetUsed: string;
+  noDescription: string;
+  pause: string;
+  start: string;
 }
 
 const translations: Record<Language, TranslationStrings> = {
@@ -335,6 +356,14 @@ const translations: Record<Language, TranslationStrings> = {
     recentActivity: 'Recent Activity',
     leadSources: 'Lead Sources',
     quickActions: 'Quick Actions',
+
+    totalRevenue: 'Total Revenue',
+    avgDealSize: 'Avg Deal Size',
+    winRate: 'Win Rate',
+    salesCycleDays: 'Sales Cycle (days)',
+    analyticsDescription: 'Track your performance metrics',
+    revenueVsTarget: 'Revenue vs Target',
+    conversionFunnel: 'Conversion Funnel',
     
     addLead: 'Add Lead',
     leadName: 'Name',
@@ -358,6 +387,11 @@ const translations: Record<Language, TranslationStrings> = {
     startDate: 'Start Date',
     endDate: 'End Date',
     active: 'Active',
+    campaignPerformance: 'Campaign Performance',
+    budgetUsed: 'Budget Used',
+    campaignRevenue: 'Campaign Revenue',
+    campaignStage: 'Campaign Stage',
+    campaignConversionRate: 'Conversion Rate',
     paused: 'Paused',
     completed: 'Completed',
     draft: 'Draft',
@@ -552,6 +586,11 @@ const translations: Record<Language, TranslationStrings> = {
     next: 'Next',
     fullContractPreview: 'Full Contract Preview',
     printContract: 'Print Contract',
+    campaignsDescription: 'Create and manage marketing campaigns',
+    budgetUsed: 'Budget Used',
+    noDescription: 'No description',
+    pause: 'Pause',
+    start: 'Start',
   },
 
   BS: {
@@ -600,7 +639,15 @@ const translations: Record<Language, TranslationStrings> = {
     recentActivity: 'Nedavne aktivnosti',
     leadSources: 'Izvori kandidata',
     quickActions: 'Brze akcije',
-    
+
+    totalRevenue: 'Ukupni prihod',
+    avgDealSize: 'Prosj. veličina ugovora',
+    winRate: 'Stopa konverzije',
+    salesCycleDays: 'Prodajni ciklus (dani)',
+    analyticsDescription: 'Praćenje performansi',
+    revenueVsTarget: 'Prihod vs Cilj',
+    conversionFunnel: 'Prodajni lijevak',
+
     addLead: 'Dodaj kandidata',
     leadName: 'Ime',
     leadEmail: 'Email',
@@ -623,6 +670,11 @@ const translations: Record<Language, TranslationStrings> = {
     startDate: 'Datum početka',
     endDate: 'Datum završetka',
     active: 'Aktivna',
+    campaignPerformance: 'Performanse kampanje',
+    budgetUsed: 'Iskorišteni budžet',
+    campaignRevenue: 'Prihod kampanje',
+    campaignStage: 'Faza kampanje',
+    campaignConversionRate: 'Stopa konverzije',
     paused: 'Pauzirana',
     completed: 'Završena',
     draft: 'Nacrt',
@@ -817,6 +869,11 @@ const translations: Record<Language, TranslationStrings> = {
     next: 'Sljedeća',
     fullContractPreview: 'Puni pregled ugovora',
     printContract: 'Štampaj ugovor',
+    campaignsDescription: 'Kreirajte i upravljajte marketinškim kampanjama',
+    budgetUsed: 'Iskorišteni budžet',
+    noDescription: 'Bez opisa',
+    pause: 'Pauziraj',
+    start: 'Pokreni',
   },
 
   DE: {
@@ -865,7 +922,15 @@ const translations: Record<Language, TranslationStrings> = {
     recentActivity: 'Letzte Aktivitäten',
     leadSources: 'Quellen der Interessenten',
     quickActions: 'Schnellaktionen',
-    
+
+    totalRevenue: 'Gesamtumsatz',
+    avgDealSize: 'Ø Auftragsgröße',
+    winRate: 'Konversionsrate',
+    salesCycleDays: 'Verkaufszyklus (Tage)',
+    analyticsDescription: 'Leistungskennzahlen verfolgen',
+    revenueVsTarget: 'Umsatz vs Ziel',
+    conversionFunnel: 'Konversionstrichter',
+
     addLead: 'Interessent hinzufügen',
     leadName: 'Name',
     leadEmail: 'E-Mail',
@@ -888,6 +953,11 @@ const translations: Record<Language, TranslationStrings> = {
     startDate: 'Startdatum',
     endDate: 'Enddatum',
     active: 'Aktiv',
+    campaignPerformance: 'Kampagnenleistung',
+    budgetUsed: 'Ausgegebenes Budget',
+    campaignRevenue: 'Kampagnenumsatz',
+    campaignStage: 'Kampagnenphase',
+    campaignConversionRate: 'Konversionsrate',
     paused: 'Pausiert',
     completed: 'Abgeschlossen',
     draft: 'Entwurf',
@@ -1082,6 +1152,11 @@ const translations: Record<Language, TranslationStrings> = {
     next: 'Weiter',
     fullContractPreview: 'Vollständige Vertragsvorschau',
     printContract: 'Vertrag drucken',
+    campaignsDescription: 'Marketingkampagnen erstellen und verwalten',
+    budgetUsed: 'Budget verwendet',
+    noDescription: 'Keine Beschreibung',
+    pause: 'Pausieren',
+    start: 'Starten',
   },
 };
 
