@@ -1,22 +1,22 @@
-project_id = "rdymuwbotklotlxqiwyc"
+project_id = "bpkhoyvtqtvmfwpeewcy"
 
 [functions.send-enrollment-notification]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-bulk-email]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-visit-reminders]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-after-visit-email]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-after-visit-auto]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-visitor-registration]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-contract-email]
-verify_jwt = false
+verify_jwt = true

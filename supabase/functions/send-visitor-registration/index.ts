@@ -142,7 +142,7 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     const emailResponse = await resend.emails.send({
-      from: "IDSS Pro CRM <onboarding@resend.dev>",
+      from: "IDSS Pro CRM <info@idss.ba>",
       to: [parentEmail],
       subject: subject,
       html: bodyHtml,

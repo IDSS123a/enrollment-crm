@@ -98,7 +98,7 @@ const handler = async (req: Request): Promise<Response> => {
     const resend = new Resend(resendApiKey);
 
     const emailResponse = await resend.emails.send({
-      from: "IDSS <onboarding@resend.dev>",
+      from: "IDSS Pro CRM <info@idss.ba>",
       to: [recipientEmail],
       subject: subjects[lang] || subjects.en,
       html: bodies[lang] || bodies.en,
