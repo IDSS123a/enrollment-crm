@@ -107,6 +107,7 @@ export default function Visitors() {
     if (user) {
       loadVisitors();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadVisitors = async () => {
@@ -346,11 +347,12 @@ export default function Visitors() {
       setIsModalOpen(false);
       resetForm();
       loadVisitors();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       console.error('Save error:', error);
       toast({
         title: 'Error',
-        description: error.message || t('saveError'),
+        description: message || t('saveError'),
         variant: 'destructive',
       });
     } finally {
@@ -367,10 +369,11 @@ export default function Visitors() {
       
       toast({ title: 'Success', description: t('deleteSuccess') });
       loadVisitors();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       toast({
         title: 'Error',
-        description: error.message || t('deleteError'),
+        description: message || t('deleteError'),
         variant: 'destructive',
       });
     }
@@ -489,9 +492,10 @@ export default function Visitors() {
       setBulkEmailSubject('');
       setBulkEmailMessage('');
       setSelectedVisitors(new Set());
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       console.error('Bulk email error:', error);
-      toast({ title: 'Error', description: error.message || 'Failed to send emails', variant: 'destructive' });
+      toast({ title: 'Error', description: message || 'Failed to send emails', variant: 'destructive' });
     } finally {
       setSendingBulkEmail(false);
     }
@@ -509,9 +513,10 @@ export default function Visitors() {
         title: 'Reminders Sent',
         description: `${results?.sent || 0} reminders sent, ${results?.failed || 0} failed, ${results?.skipped || 0} skipped`,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       console.error('Reminder error:', error);
-      toast({ title: 'Error', description: error.message || 'Failed to send reminders', variant: 'destructive' });
+      toast({ title: 'Error', description: message || 'Failed to send reminders', variant: 'destructive' });
     } finally {
       setSendingReminders(false);
     }
@@ -593,9 +598,10 @@ export default function Visitors() {
       setSelectedVisitors(new Set());
       setIsAfterVisitPreviewOpen(false);
       loadVisitors(); // Reload to update sent status
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       console.error('After visit email error:', error);
-      toast({ title: 'Error', description: error.message || 'Failed to send emails', variant: 'destructive' });
+      toast({ title: 'Error', description: message || 'Failed to send emails', variant: 'destructive' });
     } finally {
       setSendingAfterVisit(false);
     }

@@ -43,7 +43,7 @@ interface TranslationStrings {
 
   // Campaign details
   campaignPerformance: string;
-  budgetUsed: string;
+  // budgetUsed: string; // removed duplicate
   campaignRevenue: string;
   campaignStage: string;
   campaignConversionRate: string;
@@ -388,7 +388,7 @@ const translations: Record<Language, TranslationStrings> = {
     endDate: 'End Date',
     active: 'Active',
     campaignPerformance: 'Campaign Performance',
-    budgetUsed: 'Budget Used',
+    // budgetUsed: 'Budget Used', // removed duplicate
     campaignRevenue: 'Campaign Revenue',
     campaignStage: 'Campaign Stage',
     campaignConversionRate: 'Conversion Rate',
@@ -671,7 +671,7 @@ const translations: Record<Language, TranslationStrings> = {
     endDate: 'Datum završetka',
     active: 'Aktivna',
     campaignPerformance: 'Performanse kampanje',
-    budgetUsed: 'Iskorišteni budžet',
+    // budgetUsed: 'Iskorišteni budžet', // removed duplicate
     campaignRevenue: 'Prihod kampanje',
     campaignStage: 'Faza kampanje',
     campaignConversionRate: 'Stopa konverzije',
@@ -1151,12 +1151,12 @@ const translations: Record<Language, TranslationStrings> = {
     previous: 'Zurück',
     next: 'Weiter',
     fullContractPreview: 'Vollständige Vertragsvorschau',
-    printContract: 'Vertrag drucken',
+    printContract: 'Vertrag drucken'
+    ,
     campaignsDescription: 'Marketingkampagnen erstellen und verwalten',
-    budgetUsed: 'Budget verwendet',
     noDescription: 'Keine Beschreibung',
     pause: 'Pausieren',
-    start: 'Starten',
+    start: 'Starten'
   },
 };
 

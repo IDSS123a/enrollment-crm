@@ -85,12 +85,12 @@ const handler = async (req: Request): Promise<Response> => {
         ? new Date(visitor.visit_date).toLocaleDateString("bs-BA") 
         : "N/A";
 
-      let emailBody = template.body_html
+      const emailBody = template.body_html
         .replace(/{child_name}/g, childName)
         .replace(/{parent_name}/g, parentName)
         .replace(/{visit_date}/g, visitDate);
 
-      let emailSubject = template.subject
+      const emailSubject = template.subject
         .replace(/{child_name}/g, childName)
         .replace(/{parent_name}/g, parentName)
         .replace(/{visit_date}/g, visitDate);
@@ -130,10 +130,11 @@ const handler = async (req: Request): Promise<Response> => {
       JSON.stringify({ success: true, results }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Internal server error';
     console.error("Error in send-after-visit-email function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: message }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }

@@ -41,7 +41,7 @@ interface Contract {
   academic_year: string;
   grade: number;
   language: string;
-  contract_data: Record<string, any>;
+  contract_data: Record<string, unknown>;
   pdf_url: string | null;
   docx_url: string | null;
   status: string;
@@ -202,9 +202,10 @@ export default function Contracts() {
       setIsWizardOpen(false);
       resetWizard();
       loadData();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       console.error('Contract generation error:', error);
-      toast({ title: t('saveError'), description: error.message, variant: 'destructive' });
+      toast({ title: t('saveError'), description: message, variant: 'destructive' });
     } finally {
       setGenerating(false);
     }
@@ -218,8 +219,9 @@ export default function Contracts() {
       if (error) throw error;
       toast({ title: t('contractSignedSuccess') });
       loadData();
-    } catch (error: any) {
-      toast({ title: t('saveError'), description: error.message, variant: 'destructive' });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
+      toast({ title: t('saveError'), description: message, variant: 'destructive' });
     }
   };
 
@@ -239,8 +241,9 @@ export default function Contracts() {
       if (error) throw error;
       toast({ title: t('contractSendSuccess'), description: parentEmail });
       loadData();
-    } catch (error: any) {
-      toast({ title: t('saveError'), description: error.message, variant: 'destructive' });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
+      toast({ title: t('saveError'), description: message, variant: 'destructive' });
     }
   };
 
@@ -253,7 +256,7 @@ export default function Contracts() {
   };
 
   const buildTemplateData = (contract: Contract): ContractTemplateData => {
-    const data = contract.contract_data as Record<string, any>;
+    const data = contract.contract_data as Record<string, unknown>;
     return {
       grade_number: data.grade_number || '',
       grade_text: data.grade_text || '',
@@ -317,7 +320,7 @@ export default function Contracts() {
   };
 
   const filteredContracts = contracts.filter(c => {
-    const data = c.contract_data as Record<string, any>;
+    const data = c.contract_data as Record<string, unknown>;
     const childName = (data?.child_full_name || '').toLowerCase();
     return childName.includes(searchQuery.toLowerCase()) || c.contract_number.toLowerCase().includes(searchQuery.toLowerCase());
   });
@@ -408,7 +411,7 @@ export default function Contracts() {
                     </TableCell>
                   </TableRow>
                 ) : paginateArray(filteredContracts, currentPage, pageSize).map((contract) => {
-                  const data = contract.contract_data as Record<string, any>;
+                  const data = contract.contract_data as Record<string, unknown>;
                   return (
                     <TableRow key={contract.id}>
                       <TableCell className="font-mono text-sm">{contract.contract_number}</TableCell>

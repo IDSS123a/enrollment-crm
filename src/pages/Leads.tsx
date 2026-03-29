@@ -71,6 +71,7 @@ export default function Leads() {
     if (user) {
       loadLeads();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadLeads = async () => {
@@ -128,10 +129,11 @@ export default function Leads() {
       setIsModalOpen(false);
       resetForm();
       loadLeads();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       toast({
         title: 'Error',
-        description: error.message || t('saveError'),
+        description: message || t('saveError'),
         variant: 'destructive',
       });
     }
@@ -146,10 +148,11 @@ export default function Leads() {
       
       toast({ title: 'Success', description: t('deleteSuccess') });
       loadLeads();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       toast({
         title: 'Error',
-        description: error.message || t('deleteError'),
+        description: message || t('deleteError'),
         variant: 'destructive',
       });
     }
@@ -375,7 +378,7 @@ export default function Leads() {
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className={statusColors[lead.status]}>
-                          {t(lead.status === 'new' ? 'newLead' : lead.status as any)}
+                          {t(lead.status === 'new' ? 'newLead' : lead.status)}
                         </Badge>
                       </TableCell>
                       <TableCell>{lead.source || '-'}</TableCell>

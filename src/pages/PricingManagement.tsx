@@ -37,6 +37,7 @@ export default function PricingManagement() {
 
   useEffect(() => {
     fetchPricing();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchPricing = async () => {

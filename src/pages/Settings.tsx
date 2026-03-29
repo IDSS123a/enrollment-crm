@@ -38,10 +38,11 @@ export default function Settings() {
       if (error) throw error;
       
       toast({ title: 'Success', description: t('saveSuccess') });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       toast({
         title: 'Error',
-        description: error.message || t('saveError'),
+        description: message || t('saveError'),
         variant: 'destructive',
       });
     } finally {
@@ -137,7 +138,7 @@ export default function Settings() {
           <div className="space-y-4">
             <div>
               <Label htmlFor="language">{t('language')}</Label>
-              <Select value={language} onValueChange={(value: any) => setLanguage(value)}>
+              <Select value={language} onValueChange={(value: string) => setLanguage(value as 'EN' | 'BS' | 'DE')}>
                 <SelectTrigger className="w-full sm:w-[200px]">
                   <SelectValue />
                 </SelectTrigger>

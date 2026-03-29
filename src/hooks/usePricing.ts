@@ -57,7 +57,7 @@ export function usePricing() {
     const isDomestic = formData.resident_type === 'domestic';
 
     // Base registration fee
-    let registrationFee = formData.registration_fee_waived 
+    const registrationFee = formData.registration_fee_waived 
       ? 0 
       : (isDomestic ? pricing.registration_fee_domestic : pricing.registration_fee_foreign);
 

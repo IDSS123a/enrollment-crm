@@ -69,6 +69,7 @@ export function EmailTemplatesEditor() {
 
   useEffect(() => {
     loadTemplates();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Live preview update
@@ -76,6 +77,7 @@ export function EmailTemplatesEditor() {
     if (editingTemplate) {
       updateLivePreview(editedBody);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editedBody]);
 
   const loadTemplates = async () => {
@@ -154,10 +156,11 @@ export function EmailTemplatesEditor() {
       toast({ title: 'Success', description: 'Template saved successfully' });
       setEditingTemplate(null);
       loadTemplates();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       toast({
         title: 'Error',
-        description: error.message || 'Failed to save template',
+        description: message || 'Failed to save template',
         variant: 'destructive',
       });
     } finally {
@@ -174,7 +177,8 @@ export function EmailTemplatesEditor() {
 
       if (error) throw error;
       loadTemplates();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An error occurred';
       toast({
         title: 'Error',
         description: error.message || 'Failed to update template',

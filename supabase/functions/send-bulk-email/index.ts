@@ -155,7 +155,7 @@ const handler = async (req: Request): Promise<Response> => {
           .replace(/\n/g, "<br>");
 
         // Replace variables in template
-        let bodyHtml = bodyTemplate
+        const bodyHtml = bodyTemplate
           .replace(/\{child_name\}/g, childName)
           .replace(/\{message\}/g, sanitizedMessage)
           .replace(/\{subject\}/g, subject);
@@ -170,10 +170,11 @@ const handler = async (req: Request): Promise<Response> => {
         results.sent++;
         results.details.push({ name: childName, status: "sent", email });
         console.log(`Email sent to ${email} for ${childName}`);
-      } catch (emailError: any) {
+      } catch (emailError: unknown) {
         results.failed++;
         results.details.push({ name: childName, status: "failed", email });
-        console.error(`Failed to send email to ${email}:`, emailError.message);
+        const message = emailError instanceof Error ? emailError.message : 'Internal server error';
+        console.error(`Failed to send email to ${email}:`, message);
       }
     }
 
@@ -183,10 +184,11 @@ const handler = async (req: Request): Promise<Response> => {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Internal server error';
     console.error("Error in bulk email function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: message }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }

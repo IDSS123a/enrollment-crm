@@ -1,3 +1,90 @@
+# ACA TASK — Phase 3, Task 1
+## Analytics: Replace Mock Data with Real Database Queries
+
+**Issued by:** Senior Architect  
+**Date:** 2026-03-28  
+**Branch:** `fix/analytics-real-data`  
+**File to edit:** `src/pages/Analytics.tsx` — ONE file only
+**Also edit:** `src/lib/translations.ts` — add missing keys
+
+---
+
+## CONTEXT
+
+Analytics.tsx has these problems:
+1. Revenue chart uses `Math.random()` — random numbers on every load
+2. `salesCycle: 18` is hardcoded — not from real data
+3. Funnel percentages are hardcoded (68.6%, 33.9%, 18.8%)
+4. Time range buttons (7d, 30d, 90d, 1y) exist but don't affect data
+5. Hardcoded English strings: "Total Revenue", "Avg Deal Size", "Win Rate", "Sales Cycle", "Track your performance metrics"
+6. Revenue chart shows months Jul-Dec hardcoded instead of last 6 real months
+
+---
+
+## STEP 1 — Create branch
+
+User runs:
+```cmd
+git checkout -b fix/analytics-real-data
+```
+
+---
+
+## STEP 2 — Add translation keys to `src/lib/translations.ts`
+
+Find the TranslationStrings interface and add these keys:
+
+```typescript
+// Add to interface:
+totalRevenue: string;
+avgDealSize: string;
+winRate: string;
+salesCycleDays: string;
+analyticsDescription: string;
+revenueVsTarget: string;
+conversionFunnel: string;
+```
+
+Add to EN translations:
+```typescript
+totalRevenue: 'Total Revenue',
+avgDealSize: 'Avg Deal Size',
+winRate: 'Win Rate',
+salesCycleDays: 'Sales Cycle (days)',
+analyticsDescription: 'Track your performance metrics',
+revenueVsTarget: 'Revenue vs Target',
+conversionFunnel: 'Conversion Funnel',
+```
+
+Add to BS translations:
+```typescript
+totalRevenue: 'Ukupni prihod',
+avgDealSize: 'Prosj. veličina ugovora',
+winRate: 'Stopa konverzije',
+salesCycleDays: 'Prodajni ciklus (dani)',
+analyticsDescription: 'Praćenje performansi',
+revenueVsTarget: 'Prihod vs Cilj',
+conversionFunnel: 'Prodajni lijevak',
+```
+
+Add to DE translations:
+```typescript
+totalRevenue: 'Gesamtumsatz',
+avgDealSize: 'Ø Auftragsgröße',
+winRate: 'Konversionsrate',
+salesCycleDays: 'Verkaufszyklus (Tage)',
+analyticsDescription: 'Leistungskennzahlen verfolgen',
+revenueVsTarget: 'Umsatz vs Ziel',
+conversionFunnel: 'Konversionstrichter',
+```
+
+Report: `✅ FILE EDITED: src/lib/translations.ts — added 7 analytics keys for EN/BS/DE`
+
+---
+
+## STEP 3 — Replace entire content of `src/pages/Analytics.tsx`
+
+```typescript
 import { useEffect, useState, useCallback } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { StatCard } from '@/components/dashboard/StatCard';
@@ -316,3 +403,53 @@ export default function Analytics() {
     </AppLayout>
   );
 }
+```
+
+Report: `✅ FILE EDITED: src/pages/Analytics.tsx — real data, no Math.random(), time range filter works, i18n`
+
+---
+
+## STEP 4 — Build check
+
+User runs:
+```cmd
+npm run build
+```
+
+Expected: zero TypeScript errors.
+
+---
+
+## STEP 5 — Commit
+
+User runs:
+```cmd
+git add src/pages/Analytics.tsx src/lib/translations.ts
+git commit -m "fix(analytics): replace mock data with real DB queries
+
+- Revenue chart now uses real campaign data per month (last 6 months)
+- Funnel now uses real visitor status counts from DB
+- Time range filter (7d/30d/90d/1y) now actually filters data
+- Lead Sources pie chart uses real lead.source values
+- All stat card titles use i18n t() keys
+- Added 7 new translation keys for EN/BS/DE
+- Removed Math.random() completely
+- Removed hardcoded percentages (68.6%, 33.9%, 18.8%)"
+```
+
+---
+
+## FINAL REPORT FORMAT
+
+```
+✅ DONE: fix/analytics-real-data
+
+Files edited:
+  ✅ src/pages/Analytics.tsx — real data, time range works, i18n
+  ✅ src/lib/translations.ts — 7 new keys (EN/BS/DE)
+
+Build: npm run build — PASS, zero errors
+Committed: fix(analytics): replace mock data with real DB queries
+
+Ready for: Campaigns.tsx migration to useCampaigns hook
+```

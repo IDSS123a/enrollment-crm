@@ -205,9 +205,10 @@ const handler = async (req: Request): Promise<Response> => {
           icon: 'bell',
         }]);
 
-      } catch (emailError: any) {
+      } catch (emailError: unknown) {
         results.failed++;
-        console.error(`Failed to send reminder to ${email}:`, emailError.message);
+        const message = emailError instanceof Error ? emailError.message : 'Internal server error';
+        console.error(`Failed to send reminder to ${email}:`, message);
       }
     }
 
@@ -217,10 +218,11 @@ const handler = async (req: Request): Promise<Response> => {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Internal server error';
     console.error("Error in visit reminder function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: message }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
