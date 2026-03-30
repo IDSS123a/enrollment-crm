@@ -37,9 +37,13 @@ function commonStyles(): string {
       * { box-sizing: border-box; margin: 0; padding: 0; }
 
       @media print {
-        body { margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         .no-print { display: none; }
         .page-break { page-break-before: always; break-before: page; }
+        @page {
+          size: A4;
+          margin: 20mm 18mm 22mm 20mm;
+        }
       }
 
       body {
@@ -51,24 +55,10 @@ function commonStyles(): string {
       }
 
       .contract-body {
-        width: 210mm;
-        min-height: 297mm;
+        max-width: 172mm;
         margin: 0 auto;
-        padding: 15mm 18mm 25mm 20mm;
+        padding: 10mm 0 10mm 0;
         background: white;
-        position: relative;
-      }
-
-      @media print {
-        .contract-body {
-          width: 210mm;
-          padding: 15mm 18mm 25mm 20mm;
-          margin: 0;
-        }
-        @page {
-          size: A4;
-          margin: 0;
-        }
       }
 
       .page-header {
@@ -178,7 +168,7 @@ function commonStyles(): string {
 
       .signature-line {
         display: inline-block;
-        width: 180px;
+        width: 220px;
         border-bottom: 1px solid #000;
         vertical-align: bottom;
         margin: 0 2px;
