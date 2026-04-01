@@ -15,6 +15,17 @@ import {
   Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
@@ -24,7 +35,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
   FileText, Search, Download, Send, CheckCircle2, Loader2,
-  Plus, Eye, PenLine, FileDown, Printer,
+  Plus, Eye, PenLine, FileDown, Printer, Trash2,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { numberToText, gradeNames, toRomanNumeral, formatDateByLocale, formatCurrencyByLocale, type NumberTextLanguage } from '@/lib/numberToText';
@@ -222,6 +233,18 @@ export default function Contracts() {
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'An error occurred';
       toast({ title: t('saveError'), description: message, variant: 'destructive' });
+    }
+  };
+
+  const handleDeleteContract = async (id: string) => {
+    try {
+      const { error } = await supabase.from('contracts').delete().eq('id', id);
+      if (error) throw error;
+      toast({ title: t('deleteSuccess') });
+      setContracts(prev => prev.filter(c => c.id !== id));
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : t('deleteError');
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     }
   };
 
@@ -466,6 +489,28 @@ export default function Contracts() {
                               <CheckCircle2 className="h-4 w-4 text-success" />
                             </Button>
                           )}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>{t('confirmDelete')}</AlertDialogTitle>
+                                <AlertDialogDescription>{contract.contract_number}</AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteContract(contract.id)}
+                                  className="bg-destructive text-destructive-foreground"
+                                >
+                                  {t('delete')}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </TableCell>
                     </TableRow>

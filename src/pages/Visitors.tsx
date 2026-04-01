@@ -28,6 +28,17 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
   Table,
   TableBody,
   TableCell,
@@ -211,14 +222,6 @@ export default function Visitors() {
       scholarship_type: formData.scholarship_type || null,
     };
 
-    // Check if status is changing to enrolled (for notifications)
-    const isNewEnrollment = formData.status === 'enrolled' && 
-      (!editingVisitor || editingVisitor.status !== 'enrolled');
-    
-    // Check if status is changing to visited (for after visit email)
-    const isNewVisit = formData.status === 'visited' && 
-      (!editingVisitor || editingVisitor.status !== 'visited');
-
     try {
       if (editingVisitor) {
         const { error } = await supabase
@@ -245,104 +248,14 @@ export default function Visitors() {
           icon: 'user-plus',
         }]);
         
-        // Send registration notification email
-        const parentEmail = formData.mother_email || formData.father_email || formData.guardian_email;
-        if (parentEmail) {
-          try {
-            const { error: regEmailError } = await supabase.functions.invoke('send-visitor-registration', {
-              body: {
-                visitorId: newVisitor.id,
-                childFirstName: formData.child_first_name,
-                childLastName: formData.child_last_name,
-                parentEmail: parentEmail,
-                visitDate: formData.visit_date,
-                visitType: formData.visit_type,
-                targetGrade: formData.target_grade,
-              },
-            });
 
-            if (regEmailError) {
-              console.error('Failed to send registration email:', regEmailError);
-            } else {
-              toast({
-                title: 'Email Sent',
-                description: `Registration confirmation sent to ${parentEmail}`,
-              });
-            }
-          } catch (emailErr) {
-            console.error('Registration email error:', emailErr);
-          }
-        }
         
         toast({ title: 'Success', description: t('saveSuccess') });
       }
 
-      // Send enrollment notification email if status changed to enrolled
-      if (isNewEnrollment) {
-        const parentEmail = formData.mother_email || formData.father_email || formData.guardian_email;
-        
-        if (parentEmail) {
-          try {
-            const { error: emailError } = await supabase.functions.invoke('send-enrollment-notification', {
-              body: {
-                visitorId: editingVisitor?.id || 'new',
-                childFirstName: formData.child_first_name,
-                childLastName: formData.child_last_name,
-                parentEmail: parentEmail,
-                targetGrade: formData.target_grade,
-                schoolYear: formData.target_school_year,
-              },
-            });
 
-            if (emailError) {
-              console.error('Failed to send enrollment email:', emailError);
-              toast({
-                title: 'Note',
-                description: 'Saved successfully, but enrollment email could not be sent.',
-                variant: 'default',
-              });
-            } else {
-              toast({
-                title: 'Email Sent',
-                description: `Enrollment confirmation sent to ${parentEmail}`,
-              });
-            }
-          } catch (emailErr) {
-            console.error('Email notification error:', emailErr);
-          }
-        }
 
-        // Log enrollment activity
-        await supabase.from('activities').insert([{
-          user_id: user?.id,
-          title: `Enrolled: ${formData.child_first_name} ${formData.child_last_name}`,
-          type: 'enrollment',
-          icon: 'graduation-cap',
-        }]);
-      }
 
-      // Send after visit email if status changed to visited
-      if (isNewVisit && editingVisitor) {
-        try {
-          const { error: afterVisitError } = await supabase.functions.invoke('send-after-visit-email', {
-            body: {
-              visitorIds: [editingVisitor.id],
-              userId: user?.id,
-            },
-          });
-
-          if (afterVisitError) {
-            console.error('Failed to send after visit email:', afterVisitError);
-          } else {
-            toast({
-              title: 'Email Sent',
-              description: `After visit thank you email sent`,
-            });
-          }
-        } catch (emailErr) {
-          console.error('After visit email error:', emailErr);
-        }
-      }
 
       setIsModalOpen(false);
       resetForm();
@@ -361,21 +274,14 @@ export default function Visitors() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t('confirmDelete'))) return;
-
     try {
       const { error } = await supabase.from('visitors').delete().eq('id', id);
       if (error) throw error;
-      
       toast({ title: 'Success', description: t('deleteSuccess') });
       loadVisitors();
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'An error occurred';
-      toast({
-        title: 'Error',
-        description: message || t('deleteError'),
-        variant: 'destructive',
-      });
+      const message = error instanceof Error ? error.message : t('deleteError');
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     }
   };
 
@@ -974,13 +880,34 @@ export default function Visitors() {
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(visitor.id)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>{t('confirmDelete')}</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  {visitor.child_first_name} {visitor.child_last_name}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(visitor.id)}
+                                  className="bg-destructive text-destructive-foreground"
+                                >
+                                  {t('delete')}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </TableCell>
                     </TableRow>
